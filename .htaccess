@@ -42,13 +42,6 @@
         Require all denied
     </FilesMatch>
 
-    # Additional protection for certain directories
-    <Directory "bin">
-        <FilesMatch "\.(ini|json|sqlite|toml|xml)$">
-            Require all denied
-        </FilesMatch>
-    </Directory>
-
     # Deny access to unnecessary files and directories
     <FilesMatch "^(heredia|zaouly|kouadio|bin/|public/|vendor/|tests/|static/|error/|README.md|.gitignore|composer.json|composer.lock|package.json|phpunit.xml|.gitattributes|robots.txt|counter.json)$">
         Require all denied
