@@ -23,12 +23,22 @@ class host
    */
   private function getHost():string
   {
-      $protocol = ((!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] != 'off') || (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443)) ? "https://" : "http://";
-  
-      $httpHost = isset($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '';
-  
-      $this->host = $protocol . $httpHost . '/' . $this->domain();
-  
+      $forwardedProto = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '';
+      $isHttps = (
+          (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+          || (isset($_SERVER['SERVER_PORT']) && (int) $_SERVER['SERVER_PORT'] === 443)
+          || strtolower((string) $forwardedProto) === 'https'
+      );
+
+      $protocol = $isHttps ? 'https://' : 'http://';
+
+      $httpHost = $_SERVER['HTTP_X_FORWARDED_HOST'] ?? ($_SERVER['HTTP_HOST'] ?? '');
+
+      $domain = trim((string) $this->domain(), '/');
+      $suffix = $domain !== '' ? '/' . $domain : '';
+
+      $this->host = $protocol . $httpHost . $suffix . '/';
+
       return $this->host;
   }
 
