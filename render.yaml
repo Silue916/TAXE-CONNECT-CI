@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: taxeconnect-ci
+    env: docker
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /
