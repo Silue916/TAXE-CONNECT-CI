@@ -1,0 +1,52 @@
+[
+  {
+    "key": [ "generate", "controller", "edit", "create" ],
+    "response": [
+      "The controller has been generated successfully.",
+      "The controller generation was successful.",
+      "The controller generation proceeded without any issues.",
+      "The controller has been built successfully.",
+      "The controller was created without errors."
+      ]
+  ,
+    "lang": "en",
+    "action": "generate_controller",
+    "context": "generate controller",
+    "check_in" : [ "controller" ],
+    "essential": [
+      [ "generate", "controller" ],
+      [ "edit", "controller" ],
+      [ "create", "controller" ]
+    ]
+  },
+  {
+    "key": [ "date", "day", "know" ],
+    "response": [
+      "Today is ",
+      "The current date is "
+    ],
+    "lang": "en",
+    "action": "get_date",
+    "context": "date",
+    "check_in" : [],
+    "essential": [
+      [ "date", "today" ],
+      [ "know", "date" ]
+    ]
+  },
+  {
+    "key": [ "give", "hour", "time" ],
+    "response": [
+      "Le time is ",
+      "The current time is "
+    ],
+    "lang": "en",
+    "action": "get_hour",
+    "context": "hour",
+    "check_in" : [],
+    "essential": [
+      [ "give", "hour" ],
+      [ "give", "time" ]
+    ]
+  }   
+]

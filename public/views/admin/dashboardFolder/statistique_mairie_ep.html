@@ -1,0 +1,152 @@
+{% extends layouts %}
+{% from breadcrumb import breadcrumb_field %}
+{% block content %}
+{{ breadcrumb_field({'Statistique mairie': 'dashboard@statistique_mairie'}) }}
+
+<div class="container-fluid dashboard">
+    <div class="row">
+        <div class="col-lg-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Structure des acteurs</h5>
+                    <div style="position: relative; height: 320px;">
+                        <canvas id="actorsChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Statut des paiements</h5>
+                    <div style="position: relative; height: 320px;">
+                        <canvas id="paymentsStatusChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Evolution mensuelle des paiements</h5>
+                    <div style="position: relative; height: 360px;">
+                        <canvas id="paymentsByMonthChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const graphs = {{ graphs|default({})|json_encode|raw }};
+    const actors = graphs.actors || {};
+    const paymentStatus = graphs.payment_status || {};
+    const byMonth = graphs.payments_by_month || [];
+
+    const actorsCanvas = document.getElementById('actorsChart');
+    if (actorsCanvas && typeof Chart !== 'undefined') {
+        new Chart(actorsCanvas.getContext('2d'), {
+            type: 'bar',
+            data: {
+                labels: ['Agents', 'Commercants', 'Contribuables', 'Utilisateurs'],
+                datasets: [{
+                    label: 'Total',
+                    data: [
+                        Number(actors.agents_total || 0),
+                        Number(actors.merchants_total || 0),
+                        Number(graphs.contributors_total || 0),
+                        Number(actors.users_total || 0)
+                    ],
+                    backgroundColor: ['#2563eb', '#0f766e', '#b45309', '#6d28d9']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: { y: { beginAtZero: true, ticks: { precision: 0 } } }
+            }
+        });
+    }
+
+    const statusCanvas = document.getElementById('paymentsStatusChart');
+    if (statusCanvas && typeof Chart !== 'undefined') {
+        new Chart(statusCanvas.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: ['Success', 'Pending', 'Failed'],
+                datasets: [{
+                    data: [
+                        Number(paymentStatus.success || 0),
+                        Number(paymentStatus.pending || 0),
+                        Number(paymentStatus.failed || 0)
+                    ],
+                    backgroundColor: ['#16a34a', '#f59e0b', '#dc2626']
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } }
+            }
+        });
+    }
+
+    const monthCanvas = document.getElementById('paymentsByMonthChart');
+    if (monthCanvas && typeof Chart !== 'undefined') {
+        const labels = byMonth.map(function (m) { return m.month || '-'; });
+        const counts = byMonth.map(function (m) { return Number(m.count || 0); });
+        const amounts = byMonth.map(function (m) { return Number(m.amount || 0); });
+
+        new Chart(monthCanvas.getContext('2d'), {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Nombre de paiements',
+                        data: counts,
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37,99,235,0.15)',
+                        yAxisID: 'y_count',
+                        tension: 0.25
+                    },
+                    {
+                        label: 'Montant (FCFA)',
+                        data: amounts,
+                        borderColor: '#059669',
+                        backgroundColor: 'rgba(5,150,105,0.15)',
+                        yAxisID: 'y_amount',
+                        tension: 0.25
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' } },
+                scales: {
+                    y_count: {
+                        type: 'linear',
+                        position: 'left',
+                        beginAtZero: true,
+                        ticks: { precision: 0 }
+                    },
+                    y_amount: {
+                        type: 'linear',
+                        position: 'right',
+                        beginAtZero: true,
+                        grid: { drawOnChartArea: false }
+                    }
+                }
+            }
+        });
+    }
+});
+</script>
+{% endblock %}

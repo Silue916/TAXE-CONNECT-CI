@@ -1,0 +1,22 @@
+{
+    "0": {
+        "usersGroup": 1,
+        "color": "shlomo"
+    },
+    "1": {
+        "login": "attecoube",
+        "color": "yedidia"
+    },
+    "2": {
+        "login": "admin",
+        "color": "yedidia"
+    },
+    "3": {
+        "login": "agent1",
+        "color": "yedidia"
+    },
+    "4": {
+        "login": "commercant",
+        "color": "shlomo"
+    }
+}

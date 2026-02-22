@@ -1,0 +1,50 @@
+{
+    "importExcelFiles": {
+        "script": "env\/importLargeFiles.py",
+        "function": "getExcelContent"
+    },
+    "convertImgToText": {
+        "script": "env\/translateImgToText.py",
+        "function": "getImgContent"
+    },
+    "convert_pdf_to_text": {
+        "script": "env\/translatepdfToText.py",
+        "function": "pdf_converter"
+    },
+    "encrypt": {
+        "script": "env\/encryptDecrypt.py",
+        "function": "encryptValue"
+    },
+    "decrypt": {
+        "script": "env\/encryptDecrypt.py",
+        "function": "decryptValue"
+    },
+    "report": {
+        "script": "env\/sendDailyReport.py",
+        "function": "send_daily_report"
+    },
+    "hello_world": {
+        "script": "hello_world.py",
+        "function": "hello_world"
+    },
+    "lunchBotModelTwo": {
+        "script": "others\/lunchBotModelTwo.py",
+        "function": "func_lunchBotModelTwo"
+    },   
+    "lunchBotModelThree": {
+        "script": "others\/lunchBotModelThree.py",
+        "function": "func_lunchModelThree"
+    },
+    "lunchRagFaissModel": {
+        "script": "others\/lunchRagFaissModel.py",
+        "function": "func_ragFaiss"
+    },
+        "translatWords": {
+        "script": "env\/translatWords.py",
+        "function": "func_translatWords"
+    },
+    "sendEmail": {
+        "script": "env\/sendEmail.py",
+        "function": "senEmail"
+    }
+}

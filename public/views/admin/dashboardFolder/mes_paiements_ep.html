@@ -1,0 +1,68 @@
+{% extends layouts %}
+{% from breadcrumb import breadcrumb_field %}
+{% block content %}
+{{ breadcrumb_field({'Mes paiements': 'dashboard@mes_paiements'}) }}
+
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-1">Total paye</h5>
+                    <p class="mb-0"><strong>{{ stats.total_paid|default(0)|e }} FCFA</strong></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-1">Reste a payer</h5>
+                    <p class="mb-0"><strong>{{ stats.outstanding|default(0)|e }} FCFA</strong></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-1">Commercant</h5>
+                    <p class="mb-0"><strong>{{ stats.merchant_ref|default('-')|e }}</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Historique de mes paiements</h5>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Recu</th>
+                        <th>Avis</th>
+                        <th>Montant</th>
+                        <th>Canal</th>
+                        <th>Statut</th>
+                        <th>Date paiement</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for payment in payments %}
+                    <tr>
+                        <td>{{ payment.receipt_ref|e }}</td>
+                        <td>{{ payment.notice_ref|e }}</td>
+                        <td>{{ payment.amount|e }} FCFA</td>
+                        <td>{{ payment.channel|e }}</td>
+                        <td>{{ payment.status|e }}</td>
+                        <td>{{ payment.paid_at is not empty ? payment.paid_at|e|dates('d/m/Y H:i') : '-' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">Aucun paiement enregistre.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

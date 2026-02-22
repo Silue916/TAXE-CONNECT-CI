@@ -1,0 +1,39 @@
+{% extends layouts %} 
+{% from forms import input_field, submit %}
+{% block content %}
+
+    <div class="login">
+        <div class="secure" align="center">
+            <img src="{{ __img('secure.svg') }}" alt="">
+        </div>
+        <div class="texthead"><strong>OTP verification</strong></div>
+        <div class="otpMessageText">
+            A one-time verification code (OTP) has been successfully sent to your email address: <strong>{{ email }}</strong>. Please check your inbox (and spam folder, if necessary) to retrieve it.
+        </div>
+        <form id="authentification" method="POST">
+
+            {{ __csrf() }} 
+
+            {{ input_field(
+                { 
+                    type : 'text' , 
+                    require : true ,
+                    name : '__otp__' ,
+                    placeholder : 'Please enter the code send to your email ID :',
+                }
+            )}}
+            
+            {{ submit(
+                {
+                    label : 'Confirm',
+                    icon : 'bi bi-lock'
+                }
+            )}}
+
+        </form>
+    </div>
+
+    <div class="col-md-12 epaphrodite" align="center">
+        <a href="{{ __host() }}"><i class="icofont-long-arrow-left"></i> ADMINISTRATION</a>
+    </div>
+{% endblock %}

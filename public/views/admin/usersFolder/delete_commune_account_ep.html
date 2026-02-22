@@ -1,0 +1,93 @@
+{% extends layouts %}
+{% from breadcrumb import breadcrumb_field %}
+{% from message import alert_msg %}
+{% block content %}
+{{ alert_msg(reponse, alert) }}
+{{ breadcrumb_field('SUPPRESSION COMPTE COMMUNE') }}
+
+<div class="container">
+    <form method="POST" class="mb-4">
+        {{ __csrf() }}
+        <div class="row g-3 align-items-end">
+            <div class="col-md-8">
+                <label for="commune_name" class="form-label">Nom de la commune</label>
+                <input
+                    type="text"
+                    id="commune_name"
+                    name="__commune_name__"
+                    class="form-control"
+                    value="{{ commune_name|default('')|e }}"
+                    required
+                >
+            </div>
+            <div class="col-md-4">
+                <button type="submit" name="__search__" value="1" class="btn btn-primary w-100">
+                    Rechercher le compte
+                </button>
+            </div>
+        </div>
+    </form>
+
+    {% if scope is not empty %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">Informations du compte</h5>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Commune</th>
+                        <td>{{ scope.commune_name|default('-')|e }}</td>
+                    </tr>
+                    <tr>
+                        <th>Code commune</th>
+                        <td>{{ scope.commune_code|default('-')|e }}</td>
+                    </tr>
+                    <tr>
+                        <th>Login compte mairie</th>
+                        <td>{{ scope.mairie_login|default('-')|e }}</td>
+                    </tr>
+                    <tr>
+                        <th>Responsable mairie</th>
+                        <td>{{ scope.mairie_full_name|default('-')|e }}</td>
+                    </tr>
+                    <tr>
+                        <th>Statut mairie</th>
+                        <td>{{ scope.mairie_status|default('-')|e }}</td>
+                    </tr>
+                    <tr>
+                        <th>Agents lies</th>
+                        <td>{{ scope.agents_total|default(0)|e }}</td>
+                    </tr>
+                    <tr>
+                        <th>Commercants lies</th>
+                        <td>{{ scope.merchants_total|default(0)|e }}</td>
+                    </tr>
+                    <tr>
+                        <th>Contribuables lies</th>
+                        <td>{{ scope.contributors_total|default(0)|e }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="alert alert-danger">
+                Cette action supprimera le compte mairie, les agents, les commerçants et les donnees fiscales liees a cette commune.
+            </div>
+
+            <form method="POST" class="row g-3">
+                {{ __csrf() }}
+                <input type="hidden" name="__commune_name__" value="{{ scope.commune_name|e }}">
+                <div class="col-md-8">
+                    <label for="confirm_word" class="form-label">Tape SUPPRIMER pour confirmer</label>
+                    <input type="text" id="confirm_word" name="__confirm_word__" class="form-control" required>
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <button type="submit" name="__delete__" value="1" class="btn btn-danger w-100">
+                        Supprimer ce compte
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends layouts %}
+{% from breadcrumb import breadcrumb_field %}
+{% from forms import input_field, submit %}
+{% from message import alert_msg %}
+{% block content %}
+{{ alert_msg(reponse, alert) }}
+{{ breadcrumb_field('CREATE AGENT ACCOUNT') }}
+
+<div class="container">
+    <form method="POST">
+        {{ __csrf() }}
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                {{ input_field({
+                    name: '__full_name__',
+                    label: 'Agent full name',
+                    require: true,
+                    maxlength: 160,
+                    feedback: 'Required'
+                }) }}
+            </div>
+            <div class="col-md-6">
+                {{ input_field({
+                    name: '__login__',
+                    label: 'Agent login',
+                    require: true,
+                    maxlength: 80,
+                    feedback: 'Required'
+                }) }}
+            </div>
+
+            <div class="col-md-6">
+                {{ input_field({
+                    type: 'password',
+                    name: '__password__',
+                    label: 'Temporary password',
+                    require: true,
+                    feedback: 'Required'
+                }) }}
+            </div>
+            <div class="col-md-6">
+                {{ input_field({
+                    type: 'email',
+                    name: '__email__',
+                    label: 'Email',
+                    maxlength: 190
+                }) }}
+            </div>
+
+            <div class="col-md-6">
+                {{ input_field({
+                    name: '__phone__',
+                    label: 'Phone'
+                }) }}
+            </div>
+
+            <div class="col-md-12">
+                {{ submit({
+                    label: 'Create agent account',
+                    icon: 'bi bi-person-add'
+                }) }}
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

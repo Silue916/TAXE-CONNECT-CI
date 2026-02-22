@@ -1,0 +1,252 @@
+# =============== PHP Extension Installer for linux and macos =================
+# Supports MacOS, Ubuntu, Debian, and other Linux distributions.
+# Author: Y'srael Aimé N'dri
+# License: MIT
+# This script automates the process of generating, installing, and configuring
+# PHP extensions. It handles the creation of symbolic links, INI files, and
+# restarting the necessary services (PHP-FPM and web server).
+# It also includes error handling and user-friendly output messages.
+# The script is designed to be run from the command line and requires
+# appropriate permissions to install extensions and restart services.
+# ============================================================================= #
+
+#!/bin/bash
+# ==================== CONFIG ==================== #
+EXT_NAME="$1"
+TYPE_EXECUTION="$2"
+SERVER_TYPE="$3"  # apache, nginx or auto (automatic detection)
+SO_NAME="$EXT_NAME.so"
+CONFIG_FILE="config.m4"
+EXT_PATH="../extension"
+CONFIG_PATH="../config/$EXT_NAME/$CONFIG_FILE"
+HEADER_PATH="bin/epaphrodites/cbuild/config/$EXT_NAME/$EXT_NAME.h"
+M4_PATH="bin/epaphrodites/cbuild/config/$EXT_NAME/$CONFIG_FILE"
+# Colors for output
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+YELLOW='\033[0;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# ==================== FUNCTIONS ==================== #
+show_usage() {
+    echo -e "${YELLOW}Usage: $0 <extension_name> [-g|-i] [apache|nginx|auto]${NC}"
+    echo -e "  -g : Generate and install the extension (build from source)"
+    echo -e "  -i : Install an existing extension from the extension directory"
+    echo -e "  Last parameter (optional): Web server type (apache, nginx, auto). Default is auto."
+    echo -e "Example: $0 myextension -g apache"
+    exit 1
+}
+
+wait_animation() {
+    echo -n "⏳ Please wait"
+    for i in {1..3}; do
+        sleep 0.5
+        echo -n "."
+    done
+    echo
+}
+
+detect_php_version() {
+    php -r 'echo PHP_MAJOR_VERSION . "." . PHP_MINOR_VERSION;' 2>/dev/null
+}
+
+find_conf_d_path() {
+    php --ini | grep "Scan for additional .ini files in" | awk -F': ' '{print $2}'
+}
+
+detect_server_type() {
+    if [ "$SERVER_TYPE" = "apache" ] || [ "$SERVER_TYPE" = "nginx" ]; then
+        echo "$SERVER_TYPE"
+        return
+    fi
+    
+    # Automatic detection
+    if command -v apache2ctl &>/dev/null || command -v apachectl &>/dev/null; then
+        echo "apache"
+    elif command -v nginx &>/dev/null; then
+        echo "nginx"
+    else
+        echo "unknown"
+    fi
+}
+
+restart_server() {
+    local server_type=$(detect_server_type)
+    local php_version=$(detect_php_version)
+    
+    echo -e "${BLUE}🔄 Detected server: $server_type${NC}"
+    
+    # Restart PHP-FPM (common for both servers)
+    if command -v systemctl &>/dev/null; then
+        echo "🔄 Restarting PHP-FPM..."
+        sudo systemctl restart "php${php_version}-fpm.service" || sudo systemctl restart php-fpm
+    elif command -v brew &>/dev/null; then
+        echo "🔄 Restarting PHP via Homebrew..."
+        brew services restart php
+    elif command -v service &>/dev/null; then
+        echo "🔄 Restarting PHP-FPM via service..."
+        sudo service "php${php_version}-fpm" restart || sudo service php-fpm restart
+    fi
+    
+    # Restart specific web server
+    case "$server_type" in
+        apache)
+            echo "🔄 Restarting Apache..."
+            if command -v apache2ctl &>/dev/null; then
+                sudo apache2ctl graceful
+            elif command -v apachectl &>/dev/null; then
+                sudo apachectl graceful
+            elif command -v systemctl &>/dev/null; then
+                sudo systemctl restart apache2 || sudo systemctl restart httpd
+            elif command -v service &>/dev/null; then
+                sudo service apache2 restart || sudo service httpd restart
+            else
+                echo -e "${YELLOW}⚠️ Unable to restart Apache automatically. Please restart it manually.${NC}"
+            fi
+            ;;
+            
+        nginx)
+            echo "🔄 Restarting NGINX..."
+            if command -v systemctl &>/dev/null; then
+                sudo systemctl reload nginx
+            elif command -v service &>/dev/null; then
+                sudo service nginx reload
+            elif command -v nginx &>/dev/null; then
+                sudo nginx -s reload
+            else
+                echo -e "${YELLOW}⚠️ Unable to restart NGINX automatically. Please restart it manually.${NC}"
+            fi
+            ;;
+            
+        *)
+            echo -e "${YELLOW}⚠️ Server type not recognized or detected. No restart performed.${NC}"
+            echo -e "${YELLOW}⚠️ Please restart your web server and PHP-FPM manually if needed.${NC}"
+            ;;
+    esac
+}
+
+install_existing_extension() {
+    local ext_file="bin/epaphrodites/cbuild/extension/$SO_NAME"
+    
+    echo "🔍 Checking if extension exists..."
+    if [ ! -f "$ext_file" ]; then
+        echo -e "${RED}❌ Extension $SO_NAME not found in $EXT_PATH${NC}"
+        exit 1
+    fi
+    
+    echo -e "${GREEN}✅ Extension file found: $ext_file${NC}"
+    
+    CONF_D_PATH=$(find_conf_d_path)
+    EXT_FULL_PATH="$(readlink -f "$ext_file")"
+    INI_FILE="$CONF_D_PATH/${EXT_NAME}.ini"
+    
+    echo "📄 Creating INI file: $INI_FILE..."
+    echo "extension=$EXT_FULL_PATH" | sudo tee "$INI_FILE" >/dev/null
+    echo -e "${GREEN}✅ INI file created: $INI_FILE${NC}"
+    
+    # Restart services
+    restart_server
+    echo -e "${GREEN}🎉 Extension '$EXT_NAME' successfully installed!${NC}"
+}
+
+generate_and_install_extension() {
+    # ==================== PRE-CHECKS ==================== #
+    echo "🔍 Checking required config and header files..."
+    if [ ! -f "$M4_PATH" ]; then
+        echo -e "${RED}❌ Missing config file: $M4_PATH${NC}"
+        exit 1
+    fi
+    if [ ! -f "$HEADER_PATH" ]; then
+        echo -e "${RED}❌ Missing header file: $HEADER_PATH${NC}"
+        exit 1
+    fi
+    echo -e "${GREEN}✅ Config and header files found${NC}"
+
+    # ==================== SCRIPT START ==================== #
+    echo "📁 [0/8] Creating 'library' directory..."
+    mkdir -p bin/epaphrodites/cbuild/library
+    echo -e "${GREEN}✅ Directory created${NC}"
+
+    echo "🔧 [1/8] Moving to build directory..."
+    cd bin/epaphrodites/cbuild/library || { echo -e "${RED}❌ Failed to change directory.${NC}"; exit 1; }
+    echo -e "${GREEN}✅ Done${NC}"
+
+    echo "🔗 [2/8] Creating symbolic link to config.m4..."
+    if [ -f "$CONFIG_PATH" ]; then
+        ln -sf "$CONFIG_PATH" config.m4
+        echo -e "${GREEN}✅ Link created${NC}"
+    else
+        echo -e "${RED}❌ Config file $CONFIG_PATH not found. Check the config directory.${NC}"
+        exit 1
+    fi
+
+    echo "🧹 [3/8] Cleaning previous builds..."
+    wait_animation
+    make clean
+    echo -e "${GREEN}✅ Cleaning completed${NC}"
+
+    echo "🧪 [4/8] Running phpize..."
+    wait_animation
+    phpize
+    echo -e "${GREEN}✅ phpize completed${NC}"
+
+    echo "⚙️ [5/8] Configuring extension with --enable-$EXT_NAME..."
+    wait_animation
+    ./configure --enable-$EXT_NAME
+    echo -e "${GREEN}✅ Configuration successful${NC}"
+
+    echo "🔨 [6/8] Building the extension..."
+    wait_animation
+    make
+    if [ $? -ne 0 ]; then
+        echo -e "${RED}❌ Build failed. Fix your C code and try again.${NC}"
+        exit 1
+    fi
+    echo -e "${GREEN}✅ Build successful${NC}"
+
+    echo "📦 [7/8] Copying $SO_NAME to extension directory..."
+    cp "modules/$SO_NAME" "$EXT_PATH/"
+    echo -e "${GREEN}✅ Extension copied to $EXT_PATH/${NC}"
+
+    CONF_D_PATH=$(find_conf_d_path)
+    EXT_FULL_PATH="$(pwd | sed 's/library/extension/')/$SO_NAME"
+    INI_FILE="$CONF_D_PATH/${EXT_NAME}.ini"
+    
+    echo "📄 [8/8] Creating INI file: $INI_FILE..."
+    echo "extension=$EXT_FULL_PATH" | sudo tee "$INI_FILE" >/dev/null
+    echo -e "${GREEN}✅ INI file created: $INI_FILE${NC}"
+
+    # Restart services
+    restart_server
+    echo -e "${GREEN}🎉 Extension '$EXT_NAME' successfully built and loaded!${NC}"
+}
+
+# ==================== MAIN ==================== #
+# Check arguments
+if [ -z "$EXT_NAME" ] || [ -z "$TYPE_EXECUTION" ]; then
+    show_usage
+fi
+
+# Set default server type if not specified
+if [ -z "$SERVER_TYPE" ]; then
+    SERVER_TYPE="auto"
+fi
+
+# Process execution type
+case "$TYPE_EXECUTION" in
+    -g)
+        echo -e "${GREEN}📦 Generating and installing extension: $EXT_NAME${NC}"
+        echo -e "${BLUE}🖥️ Server: $SERVER_TYPE${NC}"
+        generate_and_install_extension
+        ;;
+    -i)
+        echo -e "${GREEN}📥 Installing existing extension: $EXT_NAME${NC}"
+        echo -e "${BLUE}🖥️ Server: $SERVER_TYPE${NC}"
+        install_existing_extension
+        ;;
+    *)
+        echo -e "${RED}❌ Invalid execution type: $TYPE_EXECUTION${NC}"
+        show_usage
+        ;;
+esac

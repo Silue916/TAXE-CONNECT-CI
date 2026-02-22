@@ -1,0 +1,118 @@
+{% extends layouts %}
+{% from breadcrumb import breadcrumb_field %}
+{% from forms import input_field, select_field, submit %}
+{% from message import alert_msg %}
+{% block content %}
+{{ alert_msg(reponse, alert) }}
+{{ breadcrumb_field('CREATION TAXE COMMUNALE') }}
+
+<div class="container">
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">Creer une taxe communale</h5>
+            <form method="POST">
+                {{ __csrf() }}
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        {{ input_field({
+                            name: '__code__',
+                            label: 'Code taxe',
+                            require: true,
+                            maxlength: 30,
+                            feedback: 'Required'
+                        }) }}
+                    </div>
+                    <div class="col-md-8">
+                        {{ input_field({
+                            name: '__label__',
+                            label: 'Libelle taxe',
+                            require: true,
+                            maxlength: 180,
+                            feedback: 'Required'
+                        }) }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ input_field({
+                            type: 'number',
+                            name: '__amount__',
+                            label: 'Montant (FCFA)',
+                            require: true,
+                            min: 1,
+                            step: 1,
+                            feedback: 'Required'
+                        }) }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ select_field({
+                            name: '__frequency__[]',
+                            init: 'Frequence',
+                            selected: 'label',
+                            value: 'value',
+                            datas: [
+                                {'label':'ANNUELLE','value':'ANNUELLE'},
+                                {'label':'MENSUELLE','value':'MENSUELLE'},
+                                {'label':'TRIMESTRIELLE','value':'TRIMESTRIELLE'},
+                                {'label':'PONCTUELLE','value':'PONCTUELLE'}
+                            ],
+                            require: true
+                        }) }}
+                    </div>
+                    <div class="col-md-4">
+                        {{ select_field({
+                            name: '__status__[]',
+                            init: 'Statut',
+                            selected: 'label',
+                            value: 'value',
+                            datas: [
+                                {'label':'ACTIVE','value':'ACTIVE'},
+                                {'label':'INACTIVE','value':'INACTIVE'}
+                            ],
+                            require: true
+                        }) }}
+                    </div>
+                    <div class="col-md-12">
+                        {{ submit({
+                            label: 'Creer la taxe',
+                            icon: 'bi bi-plus-circle'
+                        }) }}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Taxes deja creees (commune)</h5>
+            <table class="table table-bordered mb-0">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Libelle</th>
+                        <th>Montant</th>
+                        <th>Frequence</th>
+                        <th>Statut</th>
+                        <th>Date creation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tax in taxes %}
+                    <tr>
+                        <td>{{ tax.code|e }}</td>
+                        <td>{{ tax.label|e }}</td>
+                        <td>{{ tax.amount|e }} FCFA</td>
+                        <td>{{ tax.frequency|e }}</td>
+                        <td>{{ tax.status|e }}</td>
+                        <td>{{ tax.created_at is not empty ? tax.created_at|e|dates('d/m/Y H:i') : '-' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">Aucune taxe creee pour le moment.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
+    <link href="{{ __css('bootstrap/aos') }}" rel="stylesheet" type="text/css">
+    <link href="{{ __css('select2.min') }}" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="{{ __css('bootstrap/4.0/bootstrap.min') }}">
+    <link href="{{ __cssfont('font-awesome-min') }}" rel="stylesheet" type="text/css">
+    <link href="{{ __cssbsico('bootstrap-icons') }}" rel="stylesheet" type="text/css">
+    <link href="{{ __cssiconfont('icofont.min') }}" rel="stylesheet" type="text/css">
+    <link href="{{ __css('default/default.' ~ _DASHMODEL_ ~ '.admin.style') }}" rel="stylesheet" type="text/css">
+    <script src="{{ __js('jquery/jquery.min') }}"></script>
+    <script src="{{ __js('jquery/axios.min') }}"></script>
+    <script src="{{ __js('select2.min') }}"></script>
+    <script src="{{ __js('chart/default.chart.min') }}"></script>
+    <link rel="icon" href="{{ __img('logo_o.png') }}">
+    <title>{{ __msg('site-title') }}</title>
+    <style>
+      .bi-pencil-square{font-size:20px;line-height:1}
+    </style>
+</head>
+<body>
+
+    <!-- ======= Header ======= -->
+    <header id="header" class="header fixed-top d-flex align-items-center">
+
+        <!-- Logo -->
+        <div class="d-flex align-items-center justify-content-between">
+            <a href="{{ __host() }}" class="version d-flex align-items-center">
+                <span class="d-none d-lg-block">{{ __msg('version') }}</span>
+            </a>
+            <i class="bi bi-list toggle-sidebar-btn"></i>
+        </div>
+        <!-- End Logo -->
+
+        <!-- Dasboard header nav -->
+        <nav class="header-nav ms-auto">
+            <ul class="d-flex align-items-center">
+
+                <!-- Messages Icon -->
+                <li class="nav-item dropdown">
+                    <a class="nav-link nav-icon" href="{{ current_user_type|default(0) == 2 ? __path('dashboard@messagerie_mairie') : '#' }}">
+                        <i class="bi bi-chat-left-text"></i>
+                        <span class="badge bg-danger badge-number">{{ current_user_type|default(0) == 2 ? mairie_unread_count|default(0)|e : 0 }}</span>
+                    </a>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link nav-icon" href="{{ current_user_type|default(0) == 2 ? __path('dashboard@notifications_mairie') : '#' }}">
+                        <i class="bi bi-bell"></i>
+                        <span class="badge bg-danger badge-number">{{ current_user_type|default(0) == 2 ? mairie_unread_count|default(0)|e : 0 }}</span>
+                    </a>
+                </li>
+                <!-- End Messages Icon -->
+
+                <!-- Header Nav -->
+                <li class="nav-item dropdown pe-3"> 
+                    <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+                        <img src="{{ __img('avatar.png') }}" alt="Profil" class="rounded-circle">
+                        <span class="d-none d-md-block dropdown-toggle ps-2">{{ login }}</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+                        <li class="dropdown-header">
+                            <h6>{{ login }}</h6>
+                            <span>{{ data.usersGroup(current_user_type, 'label') }}</span>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{{ __path('users@edit_users_infos') }}">
+                                <i class="bi bi-person"></i>
+                                <span>Mes informations personnelles</span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{{ __path('users@change_password') }}">
+                                <i class="bi bi-gear"></i>
+                                <span>Changer le mot de passe</span>
+                            </a>
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center" href="{{ __logout() }}">
+                                <i class="bi bi-power"></i>
+                                <span>Deconnexion</span>
+                            </a>
+                        </li>
+                    </ul>
+                </li>
+                <!-- End Header Nav -->
+            </ul>
+        </nav>
+        <!-- End Dasboard header nav -->
+    </header>
+    <!-- ======= End Header ======= -->
+
+    <!-- ======= Sidebar ======= -->
+    <aside id="sidebar" class="sidebar">
+        <ul class="sidebar-nav" id="sidebar-nav">
+            {% set role = current_user_type|default(0) %}
+            <li class="nav-item">
+                <a class="nav-link " href="{{ __host() }}">
+                    <i class="bi bi-house"></i>
+                    <span>TABLEAU DE BORD</span>
+                </a>
+            </li>
+            {% if role == 2 %}
+            <li class="nav-item">
+                <a class="nav-link " href="{{ __path('dashboard@contribuables') }}">
+                    <i class="bi bi-building"></i>
+                    <span>Registre contribuables</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="{{ __path('dashboard@transactions') }}">
+                    <i class="bi bi-receipt"></i>
+                    <span>Transactions fiscales</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="{{ __path('dashboard@verification_recu') }}">
+                    <i class="bi bi-patch-check"></i>
+                    <span>Verifier recu</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="{{ __path('users@create_agent_account') }}">
+                    <i class="bi bi-person-plus"></i>
+                    <span>Creer compte agent</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="{{ __path('users@create_commune_tax') }}">
+                    <i class="bi bi-cash-coin"></i>
+                    <span>Creation taxe</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="{{ __path('dashboard@statistique_mairie') }}">
+                    <i class="bi bi-bar-chart-line"></i>
+                    <span>Statistique</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="{{ __path('users@delete_agent_account') }}">
+                    <i class="bi bi-person-x"></i>
+                    <span>Suppression agent</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="{{ __path('users@all_users_list') }}">
+                    <i class="bi bi-people"></i>
+                    <span>Utilisateurs plate-forme</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="{{ __path('setting@list_of_recent_actions') }}">
+                    <i class="bi bi-journal-text"></i>
+                    <span>Journal d'activites</span>
+                </a>
+            </li>
+            {% endif %}
+            {% if role == 3 %}
+            <li class="nav-item">
+                <a class="nav-link " href="{{ __path('dashboard@contribuables') }}">
+                    <i class="bi bi-building"></i>
+                    <span>Registre contribuables</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="{{ __path('dashboard@transactions') }}">
+                    <i class="bi bi-receipt"></i>
+                    <span>Transactions fiscales</span>
+                </a>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+                <a class="nav-link " href="{{ __path('users@edit_users_infos') }}">
+                    <i class="bi bi-person-circle"></i>
+                    <span>Mon profil</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link " href="{{ __path('setting@management_of_user_colors') }}">
+                    <i class="bi bi-gear"></i>
+                    <span>Parametres systeme</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+    <!-- ======= End Sidebar ======= -->  
+
+    <!-- ======= Main content ======= --> 
+    <main id="main" class="main">
+        {% block content %}{% endblock %}
+    </main>
+    <!-- ======= End Main content ======= --> 
+
+    <div class="loader"><div class="tools_loader" id="loader-1"></div></div>
+
+    <!-- Js Link codes --> 
+    <script src="{{ __js('jquery/jquery.default.main') }}"></script>
+    <script src="{{ __js('jquery/jquery') }}"></script>
+    <script src="{{ __js('bootstrap/4.0/bootstrap.bundle.min') }}"></script>
+    <script src="{{ __js('bootstrap/4.0/bootstrap.min') }}"></script>
+    <script src="{{ __js('bootstrap/aos') }}"></script>
+    <script>jQuery(window).load(function(){ jQuery(".loader").fadeOut("200"); });</script>
+    <script src="{{ __js('datatable/jquery.dataTables.min') }}"></script>
+    <script src="{{ __js('datatable/dataTables.bootstrap4.min') }}"></script>
+    <script src="{{ __js('datatable/dataTables.buttons.min')}}"></script>
+    <script src="{{ __js('datatable/buttons.html5.min')}}"></script>
+    <script src="{{ __js('datatable/pdfmake.min')}}"></script>
+    <script src="{{ __js('datatable/jszip.min')}}"></script>
+    <script src="{{ __js('datatable/vfs_fonts')}}"></script>
+    <!-- End Js Link codes --> 
+</body>
+</html>

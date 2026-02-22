@@ -1,0 +1,108 @@
+{% extends layouts %}
+{% from forms import input_field, submit %}
+{% block content %}
+
+<div class="container">
+    <div class="row align-items-start">
+        <div class="col-lg-6 mb-4">
+            <div class="tx-login-side">
+                <h2>Inscription commerçant</h2>
+                <p>
+                    Cette inscription est disponible uniquement si votre commune
+                    dispose déjà d'un compte mairie actif sur TaxeConnect.
+                </p>
+                <ul>
+                    <li>Votre compte sera crée dans le groupe commerçant</li>
+                    <li>Choisissez la commune exacte</li>
+                    <li>Conservez vos identifiants pour vous connecter</li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="login">
+                <div class="texthead"><strong>INSCRIPTION COMMERÇANT</strong></div>
+                <div class="reponses {{ class }}">{{ reponse ? reponse : "" }}</div>
+                <form method="POST">
+                    {{ __csrf() }}
+                    <input type="hidden" name="__signup__" value="1">
+
+                    <div class="form-group mb-2">
+                        <select class="form-control" name="__commune__" required>
+                            <option value="">Choisir la commune</option>
+                            {% for c in communes %}
+                            <option value="{{ c.code|default(c.name)|e }}">{{ c.name|default('-')|e }} ({{ c.code|default('-')|e }})</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    {{ input_field({
+                        type : 'text',
+                        require : true,
+                        name : '__owner_name__',
+                        placeholder : 'Nom du proprietaire...'
+                    })}}
+
+                    {{ input_field({
+                        type : 'text',
+                        require : true,
+                        name : '__business_name__',
+                        placeholder : 'Nom du commerce...'
+                    })}}
+
+                    {{ input_field({
+                        type : 'text',
+                        require : true,
+                        name : '__login__',
+                        placeholder : 'Identifiant...'
+                    })}}
+
+                    {{ input_field({
+                        type : 'password',
+                        require : true,
+                        name : '__password__',
+                        placeholder : 'Mot de passe...'
+                    })}}
+
+                    {{ input_field({
+                        type : 'text',
+                        require : false,
+                        name : '__phone__',
+                        placeholder : 'Telephone...'
+                    })}}
+
+                    {{ input_field({
+                        type : 'text',
+                        require : false,
+                        name : '__email__',
+                        placeholder : 'Email...'
+                    })}}
+
+                    {{ input_field({
+                        type : 'text',
+                        require : false,
+                        name : '__activity__',
+                        placeholder : 'Activite...'
+                    })}}
+
+                    {{ input_field({
+                        type : 'text',
+                        require : false,
+                        name : '__address__',
+                        placeholder : 'Adresse...'
+                    })}}
+
+                    {{ submit({
+                        label : 'Creer mon compte',
+                        icon : 'bi bi-person-plus'
+                    })}}
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-md-12 epaphrodite" align="center">
+    <a href="{{ __host() }}"><i class="icofont-long-arrow-left"></i> Retour accueil</a>
+</div>
+
+{% endblock %}

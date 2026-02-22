@@ -1,0 +1,83 @@
+{% extends layouts %}
+{% from breadcrumb import breadcrumb_field %}
+{% block content %}
+{{ breadcrumb_field({'Suivi paiements commercants': 'dashboard@suivi_paiements'}) }}
+
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-lg-12 d-flex gap-2 flex-wrap">
+            <a class="btn {{ state == '' ? 'btn-primary' : 'btn-outline-primary' }}" href="{{ __path('dashboard@suivi_paiements') }}">Tous</a>
+            <a class="btn {{ state == 'PAYE' ? 'btn-success' : 'btn-outline-success' }}" href="{{ __path('dashboard@suivi_paiements') }}?etat=PAYE">Payes</a>
+            <a class="btn {{ state == 'IMPAYE' ? 'btn-danger' : 'btn-outline-danger' }}" href="{{ __path('dashboard@suivi_paiements') }}?etat=IMPAYE">Impayes</a>
+            <a class="btn {{ state == 'AUCUN_AVIS' ? 'btn-secondary' : 'btn-outline-secondary' }}" href="{{ __path('dashboard@suivi_paiements') }}?etat=AUCUN_AVIS">Aucun avis</a>
+        </div>
+    </div>
+
+    <div class="row mb-3">
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-1">Commercants payes</h5>
+                    <p class="mb-0"><strong>{{ paid_count|e }}</strong></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-1">Commercants impayes</h5>
+                    <p class="mb-0"><strong>{{ unpaid_count|e }}</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Etat de paiement des commercants</h5>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Reference</th>
+                        <th>Commerce</th>
+                        <th>Proprietaire</th>
+                        <th>Avis total</th>
+                        <th>Avis payes</th>
+                        <th>Avis impayes</th>
+                        <th>Total paye</th>
+                        <th>Dernier paiement</th>
+                        <th>Etat</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in rows %}
+                    <tr>
+                        <td>{{ row.merchant_ref|e }}</td>
+                        <td>{{ row.business_name|default('-')|e }}</td>
+                        <td>{{ row.owner_name|default('-')|e }}</td>
+                        <td>{{ row.notices_total|default(0)|e }}</td>
+                        <td>{{ row.paid_notices|default(0)|e }}</td>
+                        <td>{{ row.unpaid_notices|default(0)|e }}</td>
+                        <td>{{ row.total_paid|default(0)|e }} FCFA</td>
+                        <td>{{ row.last_payment is not empty ? row.last_payment|e|dates('d/m/Y H:i') : '-' }}</td>
+                        <td>
+                            {% if row.payment_state == 'PAYE' %}
+                                <span class="badge bg-success">PAYE</span>
+                            {% elseif row.payment_state == 'IMPAYE' %}
+                                <span class="badge bg-danger">IMPAYE</span>
+                            {% else %}
+                                <span class="badge bg-secondary">AUCUN AVIS</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="9" class="text-center">Aucun commercant trouve pour ce filtre.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

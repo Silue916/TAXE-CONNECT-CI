@@ -1,0 +1,49 @@
+<?php
+
+/**
+ * ---------------------------------------------------------------
+ * INSTALL.PHP – Initialization of Required PHP Extensions
+ * ---------------------------------------------------------------
+ *
+ * This script checks if PHP is installed and if its version is 
+ * greater than or equal to 8.1. It automatically detects the operating 
+ * system (Windows, Linux, macOS) and adjusts the PHP extension 
+ * verification accordingly.
+ *
+ * - ✅ Never modifies the installed PHP version
+ * - ✅ Does not alter already installed or commented extensions
+ * - ✅ Does not uncomment extensions on Windows if they are already declared
+ * - ✅ Does not break any existing configurations
+ * - ✅ Secure installation, adapted to the environment
+ * - ✅ Composer update via `dump-autoload` only
+ *
+ * This file is intended to be integrated into a larger installer, 
+ * typically as part of the Epaphrodites framework or a modular 
+ * project based on custom PHP extensions.
+ *
+ * @author Y'Srael Aimé N'dri
+ * @version 1.0
+ */
+
+require 'bin/config/SetDirectory.php';
+
+array_shift($argv);
+
+if (count($argv) > 0) {
+    $command = implode(' ', $argv);
+    
+    $result = match ($command) {
+        "-i" => requireComponent(),
+        default => "Unrecognized command." . PHP_EOL
+    };
+    
+    echo $result;
+} else {
+    echo "No command specified." . PHP_EOL;
+}
+
+function requireComponent() {
+    require _CONSOLE_ . '/installComponent.php';
+    $component = new InstallComponent();
+    $component->run();
+}

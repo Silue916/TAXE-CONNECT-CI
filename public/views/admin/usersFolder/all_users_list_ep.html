@@ -1,0 +1,99 @@
+{% extends layouts %}
+{% from forms import filter_search, checkbox_field, actions_field, select_field %}
+{% from breadcrumb import breadcrumb_field %} 
+{% from pagination import pagination_field, dataTable_pagination %} 
+{% from message import alert_msg %}
+{% block content %}
+{{ alert_msg( reponse , alert ) }}
+{{ breadcrumb_field( 'LISTE DES UTILISATEURS DE LA PLATE-FORME' )}} 
+
+    <div class="container">
+        <div class="card_filter_search">
+            
+            {{ filter_search({
+                name: 'search', 
+                placeholder:'Rechercher...'
+            }) }}
+
+            <div class="filtercard" align="right">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    Filtres <i class="bi bi-chevron-down"></i>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <form name="filter" id ="filter" method="GET">
+                            <li>
+                                {{ select_field( 
+                                    {
+                                        name:'filtre',
+                                        init: "Groupe utilisateurs",
+                                        selected : 'label',
+                                        value : '_id',
+                                        datas : user_groups_options,
+                                        onchange : "filterForm();",
+                                        class : "dropdown",
+                                        position : position
+                                    }) 
+                                }}
+                            </li>                   
+                        </form>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <form method="POST" name="ifSendDatas">
+            {{ __csrf() }}
+            <table id="TableFromDatas" class="table table-bordered nowrap displayTable">
+                <thead scope="row">
+                    <tr>
+                        <th>{{ checkbox_field({ id : 'checkall' }) }}</th>
+                        <th>Nº</th>
+                        <th>LOGIN</th>
+                        <th>NOM ET PRENOM</th>
+                        <th>EMAIL</th>
+                        <th>TELEPHONE</th>
+                        <th>GROUPE UTILISATEURS</th>
+                        <th>ETAT</th>
+                    </tr>
+                </thead>
+                <tbody scope="row" id="searchtd">
+                    {% for selected in liste_users %} {% set counter = (counter | default (0))+1 %}
+                    <tr data-order-column="1">
+                        <td class='tblcenter' style="width: 1%;">{{ checkbox_field( { name : 'users[]' , class : 'checkitem' , value : selected.login|e } ) }}</td>
+                        <td class='nodre' style="width: 3%"></td>
+                        <td style="width: 7%">{{ selected.login|e }}</td>
+                        <td style="width: 20%">{{ selected.namesurname|e }}</td>
+                        <td style="width: 10%">{{ selected.email|e }}</td>
+                        <td style="width: 10%">{{ selected.contact|e }}</td>
+                        <td style="width: 15%" id="tdTableContent">
+                            {{ select_field({
+                                init :"GROUPE UTILISATEURS",
+                                name : selected.login|e ~ "__group__[]",
+                                value : "_id",
+                                selected : "label",
+                                datas : user_groups_options,
+                                position : selected.usersgroup|e,
+                                require : true })
+                            }}
+                        </td>
+                        {% if selected.state|e == 1 %}
+                        <td style="width: 5%;text-align:center;"><i class="fa fa-check-circle-o activate"></i></td>
+                        {% else %}
+                        <td style="width: 5%;text-align:center;"><i class="fa fa-times-circle-o disable"></i></td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {{ actions_field( 
+                {
+                    datas : data.ActionsUsers() ,
+                    export : "List_of_users"  , 
+                    pagination : authoriz ? dataTable_pagination(false, 100) : pagination_field( current , nbrePage , total )
+                }) 
+            }} 
+        </form>        
+    </div>
+    
+{% endblock %}

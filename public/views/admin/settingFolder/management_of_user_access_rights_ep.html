@@ -1,0 +1,34 @@
+{% extends layouts %}
+{% from breadcrumb import breadcrumb_field %} 
+{% from message import alert_msg %}
+{% block content %}
+{{ alert_msg( reponse , alert ) }}
+{{ breadcrumb_field('AFFECTATION DES DROITS UTILISATEURS' )}}
+    <div class="container">
+        <form method="POST" name="ifSendDatas">
+            <table id="TableFromDatas" class="table table-bordered nowrap displayTable">
+                {{ __csrf() }}
+                <thead scope="row">
+                    <tr>
+                        <th class="head">Nº</th>
+                        <th class="head">GROUPE UTILISATEURS</th>
+                        <th class="head">ACTIONS</th>
+                    </tr>
+                </thead>
+                <tbody scope="row">
+                    {% for select in select %} {% set counter = (counter | default (0))+1 %}
+                        <tr>
+                            <td class='tblcenter' style="width: 3%">{{ counter|e }}</td>
+                            <td class="text-uppercase" style="width: 20%">{{ select.label }}</td>
+                            <td style="width: 50%" id="tdTableContent">
+                                <button type="btn" name="__edit__" rel="tooltip" class="btn btn-just-icon btn-sm"><a style="text-decoration:none;" href="{{ __pathId( 'setting@assign_user_access_rights' , { '_see': counter }) }}"><i class="icofont-key"></i> Ajouter des droits d'acces</a></button>
+                                <button type="btn" name="__edit__" rel="tooltip" class="btn btn-just-icon btn-sm"><a style="text-decoration:none;" href="{{ __pathId( 'setting@list_of_user_rights_management' , { '_see': counter }) }}"><i class="icofont-eye"></i> Liste des droits d'acces</a></button>
+                                <button class="deleted" type="btn" name="__deleted__" rel="tooltip" class="btn btn-danger btn-just-icon btn-sm" value="{{ counter|e }}"><i class="icofont-bin"></i> Reinitialiser les droits d'acces</button>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </form>
+    </div> 
+{% endblock %}

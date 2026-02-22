@@ -1,0 +1,379 @@
+{# --- Input Field -- #}
+{% macro input_field(inputOptions) %}
+	<div class="form-group input_design">
+		{% if inputOptions.label is defined %}
+			<label class="form-label">{{ inputOptions.label }}</label>
+		{% endif %}
+		<input class="form-control {{ inputOptions.class is defined and inputOptions.class ? inputOptions.class }}" type="{{ inputOptions.type | default('text') }}" {% for attribute, value in inputOptions %} {% if attribute in ['name', 'placeholder', 'value', 'id', 'maxlength'] %} {{ attribute }} = "{{ value|e }}" {% endif %} {% endfor %} {{ inputOptions.require is defined and inputOptions.require ? 'required' }} {{ inputOptions.readOnly is defined ? 'readonly="readonly"' }} {% if inputOptions.character is defined or inputOptions.upper is defined %} {% set characterActions = {  'mixed': "mixed(this)",  'string': "onlyChaines(this)",  'numeric': "onlyNumeric(this)"} %} {% set eventCode = characterActions[inputOptions.character] ?? '' %} {% if inputOptions.upper is defined and inputOptions.upper %} {% set eventCode = eventCode ~ (eventCode ? '; ' : '') ~ "this.value=this.value.toUpperCase()" %} {% endif %} {% if eventCode %}  onkeyup="{{ eventCode|e }}"  {% endif %} {% endif %} {{ inputOptions.disabled is defined and inputOptions.disabled ? 'disabled' }} {{ inputOptions.oninput is defined and inputOptions.oninput ? 'oninput = "' ~ inputOptions.oninput|e ~ '"' }}>
+		{% if inputOptions.feedback is defined %}
+			<div class="invalid-feedback">{{ inputOptions.feedback }}</div>
+		{% endif %}
+		<div id="feedback" class="message"></div>
+	</div>
+{% endmacro %}
+{# --- End Input Field -- #}
+
+{# --- submit buttom -- #}
+{% macro submit(submitOptions) %}
+    <div class="{{ submitOptions.mainClass | default('form-group') }} button_design">
+        <button name="{{ submitOptions.name | default('submit') }}" class="btn btn-block {{ submitOptions.class is defined and submitOptions.class ? submitOptions.class }}" id="{{ submitOptions.id | default('BtnValidate') }}" type="{{ submitOptions.type | default('submit') }}" style="padding-right: 10px; background-color:{{ submitOptions.color is defined and submitOptions.color ? submitOptions.color : '#016D6D' }}; color: #fff;margin-top:7px;width:{{ submitOptions.width | default('100%') }};"  {% if submitOptions.onclick is defined %} onclick="{{ submitOptions.onclick ~ '()' }}"{% endif %}>
+            {% if submitOptions.icon is defined %}
+                <i class="{{ submitOptions.icon }}" {% if submitOptions.iconId is defined %}id="{{ submitOptions.iconId }}"{% endif %}></i>
+            {% endif %}
+            {{ submitOptions.label is defined and submitOptions.label ? submitOptions.label }}
+        </button>
+    </div>
+{% endmacro %}
+{# --- End submit buttom -- #}
+
+{# --- Input Field for filters -- #}
+{% macro filter_field() %}
+	<div class="input-group">
+		<input type="text" id="LargeFilters" class="form-control border-0 bg-light" placeholder="Toutes les colonnes...">
+		<div class="input-group-append">
+			<button id="button-addon1" type="submit" class="btn btn-link text-success">
+				<i class="fa fa-search"></i>
+			</button>
+		</div>
+	</div>
+{% endmacro %}
+{# --- End Input Field for filters -- #}
+
+{# --- Other Input Field for filters -- #}
+{% macro input_filter() %}
+	<div class="bg-light rounded rounded-pill searchCard">
+		<div class="input-group" id="searchGroup">
+			<input type="search" placeholder="Toutes les colonnes..." class="form-control border-0 bg-light" id="LargeFilters">
+			<div class="input-group-append">
+				<button id="button-addon1" type="submit" class="btn btn-link text-dark">
+					<i class="fa fa-search"></i>
+				</button>
+			</div>
+		</div>
+	</div>
+{% endmacro %}
+{# --- End Other Input Field for filters -- #}
+
+{# --- Other Input Field for filters -- #}
+{% macro filter_search( inputOptions ) %}
+	<form method="GET">
+		<div class="bg-light rounded rounded-pill searchCard {{ inputOptions.class is defined and inputOptions.class ? inputOptions.class }}">
+			<div class="input-group" id="searchGroup">
+				<input type="search" {% for attribute, value in inputOptions %} {% if attribute in ['name', 'placeholder'] %} {{ attribute }}="{{ value|e }}" {% endif %} {% endfor %} class="form-control border-0 bg-light" id="LargeFilters">
+				<div class="input-group-append">
+					<button id="button-addon1" {% if inputOptions.submit is defined %} name="{{ inputOptions.submit }}" {% endif %} type="submit" class="btn btn-link text-dark">
+						<i class="fa fa-search"></i>
+					</button>
+				</div>
+			</div>
+		</div>
+	</form>
+{% endmacro %}
+{# --- End Other Input Field for filters -- #}
+
+{# --- Textarea input field -- #}
+{% macro textarea_field(inputOptions) %}
+    <div class="form-group">
+        {% if inputOptions.label is defined %}
+            <label class="form-label">{{ inputOptions.label }}</label>
+        {% endif %}
+        <textarea class="form-control textarea {{ inputOptions.class is defined and inputOptions.class ? inputOptions.class }}" {% for attribute, value in inputOptions %} {% if attribute in ['name', 'rows', 'maxlength', 'id', 'placeholder'] %} {{ attribute }}="{{ value|e }}" {% endif %} {% endfor %} {% set eventCode = characterActions[inputOptions.character] ?? '' %} {% if eventCode %} onkeyup="{{ eventCode|e }}" {% endif %} {{ inputOptions.require is defined and inputOptions.require ? 'required' }}>{% if inputOptions.value is defined %}{{ inputOptions.value|e }}{% endif %}</textarea>
+        {% if inputOptions.feedback is defined %}
+			<div class="invalid-feedback">{{ inputOptions.feedback }}</div>
+		{% endif %}
+    </div>
+{% endmacro %}
+{# --- End Textarea input field -- #}
+
+{# --- Import input field -- #}
+{% macro import_field( selectOptions ) %}
+	<div class="form-group">
+		{% if selectOptions.label is not defined %}<br>{% endif %}
+		{% if selectOptions.label is defined %}
+			<label class="form-label">{{ selectOptions.label }}</label><br>
+		{% endif %}
+
+		<input type="file" class="form-control" {% for attribute, value in selectOptions %} {% if attribute in ['name', 'accept', 'value', 'id', 'placeholder' ] %} {{ attribute }}="{{ value|e }}" {% endif %} {% endfor %} {% if selectOptions.size is defined %} data-max-size="{{ selectOptions.size }}" {% endif %} {{ selectOptions.require is defined and selectOptions.require ? "required" }}>
+
+		{% if selectOptions.feedback is defined %}
+			<div class="invalid-feedback">{{ selectOptions.feedback }}</div>
+		{% endif %}
+
+		<p id="errorMessage"></p>
+	</div>
+{% endmacro %}
+{# --- End Import input field -- #}
+
+{# --- Action select Field -- #}
+{% macro actions_field( inputOptions ) %}
+	<!-- The validation select has started -->
+	<div class="blockactionsfroms">
+		<select id="export-options" class="form-select custom-select actionsbutton" name="{{ inputOptions.name ? inputOptions.name : '_sendselected_' }}" onchange="submitActions();">
+			<option selected="selected" value="">----------- Liste des actions ----------</option>
+			{% if inputOptions.datas is defined %}
+				{% for action in inputOptions.datas %}
+					{% set counter = (counter | default(0)) + 1 %}
+					<option value="{{ counter }}">{{ action }}</option>
+				{% endfor %}
+			{% endif %}
+			{% if inputOptions.export is defined %}
+				<option id="custom-excel" value="excel" data-filename="{{ inputOptions.export ? inputOptions.export : 'Export_table' }}">EXPORTER LE TABLEAU</option>
+			{% endif %}
+		</select>
+		{% if inputOptions.pagination is defined %}
+			{{ inputOptions.pagination }}
+		{% endif %}
+	</div>
+	<!-- End of validation select -->
+{% endmacro %}
+{# --- End Action select Field -- #}
+
+{# --- Check box Field -- #}
+{% macro checkbox_field( inputOptions ) %}
+	{% if inputOptions.label is defined %}
+		<div class="form-check">
+	{% endif %}
+		<input type="checkbox" {% for attribute, value in inputOptions %} {% if attribute in ['name', 'class', 'value', 'id' ] %} {{ attribute }}="{{ value|e }}" {% endif %} {% endfor %}>
+		{{ inputOptions.require is defined and inputOptions.require ? 'required' }}
+		{{ inputOptions.disabled is defined and inputOptions.disabled ? 'disabled' }}
+	{% if inputOptions.label is defined %}
+		<label class="form-check-label" for="flexCheckChecked">{{ inputOptions.label }}</label>
+		</div>
+	{% endif %}
+{% endmacro %}
+{# --- End Check box Field -- #}
+
+{# --- Radio button Field -- #}
+{% macro radio_field(inputOptions) %}
+
+    {% if inputOptions.label is not defined %}
+        <div class="alert alert-danger">Error: 'label' option is required</div>
+    {% elseif inputOptions.name is not defined %}
+        <div class="alert alert-danger">Error: 'name' option is required</div>
+    {% else %}
+		<div class="radio-group">
+			{% if inputOptions.mainLabel is defined %}
+				<label class="radio-main-label" id="{{ inputOptions.name }}_group">{{ inputOptions.mainLabel }}</label>
+			{% endif %}
+
+			<div class="radio-options" role="radiogroup" {% if inputOptions.mainLabel is defined %}aria-labelledby="{{ inputOptions.name }}_group"{% endif %}>
+				{% for index in range(0, inputOptions.label|length - 1) %}
+					{% set value = (inputOptions.values is defined and inputOptions.values[index] is defined) ? inputOptions.values[index] : index %}
+					{% set is_checked = inputOptions.checked is defined and inputOptions.checked|e == value|e %}
+					
+					<div class="custom-control custom-radio {{ inputOptions.class|default('') }}">
+						<input type="radio" class="custom-control-input"
+							name="{{ inputOptions.name }}"
+							id="{{ inputOptions.name }}_{{ index }}"
+							value="{{ value }}"
+							{% if is_checked %}checked{% endif %}
+							{% if inputOptions.require|default(false) %}required{% endif %}
+							{% if inputOptions.disabled|default(false) %}disabled{% endif %}
+							aria-describedby="{{ inputOptions.name }}_help_{{ index }}">
+
+						<label class="custom-control-label" for="{{ inputOptions.name }}_{{ index }}">
+							{{ inputOptions.label[index] }}
+						</label>
+
+						{% if inputOptions.helpText is defined and inputOptions.helpText[index] is defined %}
+							<small id="{{ inputOptions.name }}_help_{{ index }}" class="form-text text-muted">
+								{{ inputOptions.helpText[index] }}
+							</small>
+						{% endif %}
+					</div>
+				{% endfor %}
+			</div>
+		</div>
+    {% endif %}
+{% endmacro %}
+{# --- End Radio button Field -- #}
+
+{# --- Export buttom Field -- #}
+{% macro ExportFiles( libelle , add , xlsx , copie , csv ) %}
+	<div class="btn-group" id="backbouton" align="right">
+		{% if xlsx == true %}
+			<button class="btn btn-secondary" id="custom-excel" data-filename="{{ libelle }}" tabindex="0" aria-controls="TableFromDatas" type="button">
+				<span>Export
+					{{ add }}
+					(.xlsx)</span>
+			</button>
+		{% endif %}
+		{% if copie == true %}
+			<button class="btn btn-secondary buttons-copy" id="custom-copy" data-filename="{{ libelle }}" tabindex="0" aria-controls="TableFromDatas" type="button">
+				<span>Copy
+					{{ add }}</span>
+			</button>
+		{% endif %}
+		{% if csv == true %}
+			<button class="btn btn-secondary" id="custom-csv" data-filename="{{ libelle }}" tabindex="0" aria-controls="TableFromDatas" type="button">
+				<span>Export
+					{{ add }}
+					(.csv)</span>
+			</button>
+		{% endif %}
+	</div>
+{% endmacro %}
+{# --- End Export buttom Field -- #}
+
+{# --- select Field -- #}
+{% macro select_field(selectOptions) %}
+    <div class="form-group">
+        {% if selectOptions.label is defined %}
+            <label class="form-label">{{ selectOptions.label|e }}</label>
+        {% endif %}
+        <select class="form-select custom-select selecteur {{ selectOptions.class is defined and selectOptions.class ? selectOptions.class }} {{ selectOptions.select2 is defined and selectOptions.select2 ? 'select2' }}" {% for attribute, value in selectOptions %} {% if attribute in ['name', 'id', 'onchange'] %} {{ attribute }}="{{ value|e }}" {% endif %} {% endfor %} {{ selectOptions.require is defined and selectOptions.require ? 'required' }} {{ selectOptions.disabled is defined and selectOptions.disabled ? 'disabled' }}>
+            {% if selectOptions.init is defined %}
+                <option value="">------ {{ selectOptions.init }} ------</option> 
+            {% endif %}
+            {% if selectOptions.datas is defined %}
+                {% set selected_option_found = false %}
+                {% for datas in selectOptions.datas %}
+                    {% set is_selected = false %}
+                    {% if selectOptions.position is defined %}
+                        {% if selectOptions.value is defined and datas[selectOptions.value]|e == selectOptions.position|e %}
+                            {% set is_selected = true %}
+                        {% elseif selectOptions.selected is defined and datas[selectOptions.selected]|e == selectOptions.position|e %}
+                            {% set is_selected = true %}
+                        {% elseif selectOptions.value is not defined and selectOptions.selected is not defined and loop.index == selectOptions.position %}
+                            {% set is_selected = true %}
+                        {% endif %}
+                    {% endif %}
+                    <option {% if is_selected and not selected_option_found %} selected="selected" {% set selected_option_found = true %} {% endif %} value="{{ selectOptions.value is defined and selectOptions.value ? datas[selectOptions.value]|e : loop.index }}">
+                        {{ selectOptions.selected is defined and selectOptions.selected ? datas[selectOptions.selected]|e : datas|e }}
+                    </option>
+                {% endfor %}
+            {% endif %}
+        </select>
+    </div>
+{% endmacro %}
+{# --- End select Field -- #}
+
+{# --- multi select Field -- #}
+{% macro multiSelect_field(selectOptions) %}
+    <div class="form-group multiSelectForm">
+        {% if selectOptions.label is defined %}
+            <label class="form-label">{{ selectOptions.label|e }}</label>
+        {% endif %}
+        <div class="dropdown">
+			<button class="btn w-100" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">------ 
+				{{ selectOptions.button_label is defined ? selectOptions.button_label : 'Select Options' }} ------
+				<i class="bi-chevron-down"></i> 
+			</button>
+            <div class="dropdown-menu dropdownEpaphroditesSelector w-100" aria-labelledby="dropdownMenuButton">
+                <fieldset>
+                    {% if selectOptions.datas is defined %}
+                        {% for datas in selectOptions.datas %}
+                            {% set is_selected = selectOptions.position is defined and (selectOptions.value is defined and selectOptions.value in datas and datas[selectOptions.value]|e in selectOptions.position or loop.index in selectOptions.position) %}
+                            <div class="form-check">
+                                <input type="checkbox" class="form-check-input {{ selectOptions.class is defined and selectOptions.class ? selectOptions.class }}" id="option_{{ loop.index }}" name="{{ selectOptions.name is defined ? selectOptions.name ~ '[]' : 'options[]' }}" value="{{ selectOptions.value is defined ? datas[selectOptions.value]|e : loop.index }}" {% if is_selected %} checked="checked" {% endif %} onchange="{{ selectOptions.onchange is defined ? selectOptions.onchange : '' }}" tabindex="0">
+                                <label class="form-check-label" for="option_{{ loop.index }}">
+                                    {{ selectOptions.selected is defined and selectOptions.selected ? datas[selectOptions.selected]|e : datas|e }}
+                                </label>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                </fieldset>
+            </div>
+        </div>
+    </div>
+{% endmacro %}
+{# --- End multi select Field -- #}
+
+{# --- Signature Field -- #}
+{% macro signature_field(signatureOptions) %}
+	<div class="signature-wrapper">
+		{% if signatureOptions.label is defined %}
+			<label for="{{ signatureOptions.canvas|e }}" class="signature-label">{{ signatureOptions.label|e }}</label>
+		{% endif %}
+		<div class="signature-container">
+			<canvas id="{{ signatureOptions.canvas|e }}" width="400" height="200" class="signature-canvas" style="cursor: crosshair;"></canvas>
+			<button type="button" id="clearSignature" class="clear-signature"> <i class="bi bi-trash"></i></button>
+		</div>
+		<input type="hidden" id="{{ signatureOptions.input|e }}" name="{{ signatureOptions.name|e|default('signature') }}" data-validate="{{ signatureOptions.name|e|default('signature') }}" required>
+		<div id="{{ signatureOptions.input|e }}-error" class="signature-error" style="color: red; display: none;">This field is required!!!</div>
+   </div>
+   <script> document.addEventListener("DOMContentLoaded", () => { const canvas = document.getElementById('{{ signatureOptions.canvas|e }}'); const ctx = canvas?.getContext('2d'); const clearBtn = document.getElementById('clearSignature'); const signatureInput = document.getElementById('{{ signatureOptions.input|e }}'); const errorElement = document.getElementById('{{ signatureOptions.input|e }}-error'); const form = document.getElementById('{{ signatureOptions.form }}'); if (!canvas || !ctx) { console.error("Canvas not found or context not available"); return;  } ctx.strokeStyle = '{{ signatureOptions.color|e|default("#000") }}'; ctx.lineWidth = {{ signatureOptions.weight|e|default(2) }}; ctx.lineCap = 'round'; let isDrawing = false; let hasDrawn = false; const startDrawing = (e) => { isDrawing = true; hasDrawn = true; ctx.beginPath(); ctx.moveTo(e.offsetX, e.offsetY); }; const draw = (e) => { if (isDrawing) { ctx.lineTo(e.offsetX, e.offsetY); ctx.stroke(); } }; const stopDrawing = () => { isDrawing = false; if (hasDrawn) { saveSignature(); } }; const resetCanvas = () => { ctx.clearRect(0, 0, canvas.width, canvas.height); signatureInput.value = ""; hasDrawn = false; hideError(); }; const saveSignature = () => { const signatureDataURL = canvas.toDataURL('image/png'); signatureInput.value = signatureDataURL; hideError(); }; const showError = () => { if (errorElement) { errorElement.style.display = 'block'; } }; const hideError = () => { if (errorElement) {  errorElement.style.display = 'none'; } }; const validateSignature = (e) => { if (!signatureInput.value) { e.preventDefault(); showError(); } }; canvas.addEventListener('mousedown', startDrawing); canvas.addEventListener('mousemove', draw); canvas.addEventListener('mouseup', stopDrawing); canvas.addEventListener('mouseout', stopDrawing); canvas.addEventListener('touchstart', (e) => { e.preventDefault(); const touch = e.touches[0]; const mouseEvent = new MouseEvent('mousedown', { clientX: touch.clientX, clientY: touch.clientY }); canvas.dispatchEvent(mouseEvent); }, false); canvas.addEventListener('touchmove', (e) => { e.preventDefault(); const touch = e.touches[0]; const mouseEvent = new MouseEvent('mousemove', { clientX: touch.clientX, clientY: touch.clientY }); canvas.dispatchEvent(mouseEvent); }, false); canvas.addEventListener('touchend', (e) => { e.preventDefault(); const mouseEvent = new MouseEvent('mouseup', {}); canvas.dispatchEvent(mouseEvent); }, false); if (clearBtn) { clearBtn.addEventListener('click', resetCanvas); } if (form) { form.addEventListener('{{ signatureOptions.submit | default("submit") }}', validateSignature); } });</script>
+{% endmacro %}
+{# --- End signature Field -- #}
+
+{# --- Editor Field -- #}
+{% macro editor_field(options) %}
+    <div class="editor-container">
+        <div class="toolbar">
+            <select onchange="changeFontFamily(this.value)" title="Font Family">
+                <option value="">Default Font</option>
+                <option value="Arial">Arial</option>
+                <option value="Times New Roman">Times New Roman</option>
+                <option value="Courier New">Courier New</option>
+                <option value="Georgia">Georgia</option>
+                <option value="Verdana">Verdana</option>
+            </select>
+            <div class="separator"></div>
+            <select onchange="changeFontSize(this.value)" title="Font Size" class="textSize">
+                <option value="1">10px</option>
+                <option value="2">11px</option>
+                <option value="3" selected>12px</option>
+                <option value="4">14px</option>
+                <option value="5">18px</option>
+                <option value="6">24px</option>
+                <option value="7">32px</option>
+                <option value="8">48px</option>
+            </select>
+            <button type="button" onclick="formatText('bold')" title="Bold" class="toolbar-btn">
+                <i class="bi bi-type-bold"></i>
+            </button>
+            <button type="button" onclick="formatText('italic')" title="Italic" class="toolbar-btn">
+                <i class="bi bi-type-italic"></i>
+            </button>
+            <button type="button" onclick="formatText('underline')" title="Underline" class="toolbar-btn">
+                <i class="bi bi-type-underline"></i>
+            </button>
+            <button type="button" onclick="formatText('strikeThrough')" title="Strikethrough" class="toolbar-btn">
+                <i class="bi bi-type-strikethrough"></i>
+            </button>
+            <div class="separator"></div>
+            <button type="button" onclick="formatText('insertUnorderedList')" title="Bullet List" class="toolbar-btn">
+                <i class="bi bi-list-ul"></i>
+            </button>
+            <button type="button" onclick="formatText('insertOrderedList')" title="Numbered List" class="toolbar-btn">
+                <i class="bi bi-list-ol"></i>
+            </button>
+            <div class="separator"></div>
+            <button type="button" onclick="formatText('justifyLeft')" title="Align Left" class="toolbar-btn">
+                <i class="bi bi-text-left"></i>
+            </button>
+            <button type="button" onclick="formatText('justifyCenter')" title="Center" class="toolbar-btn">
+                <i class="bi bi-text-center"></i>
+            </button>
+            <button type="button" onclick="formatText('justifyRight')" title="Align Right" class="toolbar-btn">
+                <i class="bi bi-text-right"></i>
+            </button>
+            <button type="button" onclick="formatText('justifyFull')" title="Justify" class="toolbar-btn">
+                <i class="bi bi-justify"></i>
+            </button>
+            <div class="separator"></div>
+            <button type="button" onclick="toggleTablePalette()" title="Insert Table" class="toolbar-btn">
+                <i class="bi bi-table"></i>
+            </button>
+            <div class="separator"></div>
+            <input type="color" id="textColor" title="Text Color" onchange="changeTextColor(this.value)">
+            <input type="color" id="bgColor" title="Background Color" onchange="changeBgColor(this.value)">
+            <div class="separator"></div>
+            <button type="button" onclick="undoAction()" title="Undo" class="toolbar-btn">
+                <i class="bi bi-arrow-90deg-left"></i>
+            </button>
+            <button type="button" onclick="redoAction()" title="Redo" class="toolbar-btn">
+                <i class="bi bi-arrow-90deg-right"></i>
+            </button>
+            <div class="separator"></div>
+            <div id="table-palette" class="table-palette" style="display: none;">
+                <div id="table-grid" class="table-grid"></div>
+                <div id="table-size-display" class="table-size-display">1x1</div>
+            </div>
+        </div>
+        <div contenteditable="true" id="editor" class="editor">{{ options.value ? options.value|raw : '' }}</div>
+        <input type="hidden" name="{{ options.name|default('editor_content') }}" id="editor_content">
+    </div>
+    <script>function formatText(command) {document.execCommand(command, false, null);}function changeTextColor(color) {document.execCommand("foreColor", false, color);}function changeBgColor(color) {document.execCommand("hiliteColor", false, color);}function undoAction() {document.execCommand("undo", false, null);}function redoAction() {document.execCommand("redo", false, null);}function changeFontSize(size) {document.execCommand("fontSize", false, size);}function changeFontFamily(font) {document.execCommand("fontName", false, font);}function toggleTablePalette() {const palette = document.getElementById('table-palette');if (palette.style.display === 'block') {palette.style.display = 'none';} else {palette.style.display = 'block';initTablePalette();}}function initTablePalette() {const grid = document.getElementById('table-grid');const palette = document.getElementById('table-palette');const sizeDisplay = document.getElementById('table-size-display');grid.innerHTML = '';const maxRows = 5;const maxCols = 5;let selectedRows = 1;let selectedCols = 1;for (let i = 0; i < maxRows; i++) {const row = document.createElement('div');row.className = 'table-row';for (let j = 0; j < maxCols; j++) {const cell = document.createElement('div');cell.className = 'table-cell';row.appendChild(cell);}grid.appendChild(row);}const cells = grid.getElementsByClassName('table-cell');for (let i = 0; i < cells.length; i++) {cells[i].addEventListener('mouseover', function() {const rowIndex = Math.floor(i / maxCols) + 1;const colIndex = (i % maxCols) + 1;selectedRows = rowIndex;selectedCols = colIndex;sizeDisplay.textContent = `${selectedRows}x${selectedCols}`;highlightCells(rowIndex, colIndex);});cells[i].addEventListener('click', function() {insertTable(selectedRows, selectedCols);toggleTablePalette();});}palette.addEventListener('mouseleave', function() {palette.style.display = 'none';});highlightCells(1, 1);}function highlightCells(rows, cols) {const cells = document.getElementsByClassName('table-cell');for (let i = 0; i < cells.length; i++) {const rowIndex = Math.floor(i / 5) + 1;const colIndex = (i % 5) + 1;cells[i].classList.toggle('highlighted', rowIndex <= rows && colIndex <= cols);}}function insertTable(rows, cols) {const editor = document.getElementById("editor");const table = document.createElement("table");table.style.border = "1px solid #000";table.style.borderCollapse = "collapse";table.style.width = "100%";table.style.margin = "10px 0";for (let i = 0; i < rows; i++) {const tr = document.createElement("tr");for (let j = 0; j < cols; j++) {const td = document.createElement("td");td.style.border = "1px solid #000";td.style.padding = "5px";td.innerHTML = "&nbsp;";tr.appendChild(td);}table.appendChild(tr);}if (document.activeElement === editor) {const range = document.getSelection().getRangeAt(0);range.deleteContents();const container = document.createElement("div");container.appendChild(table);range.insertNode(container);range.collapse(false);} else {editor.appendChild(table);}document.getElementById("table-palette").style.display = "none";editor.dispatchEvent(new Event("input"));}document.addEventListener('DOMContentLoaded', function() {const editor = document.getElementById('editor');const hiddenInput = document.getElementById('editor_content');function updateHiddenInput() {hiddenInput.value = editor.innerHTML;}editor.addEventListener('input', updateHiddenInput);const observer = new MutationObserver(updateHiddenInput);observer.observe(editor, { childList: true, subtree: true });});</script>
+{% endmacro %}
+{# --- End editor Field -- #}

@@ -1,0 +1,137 @@
+{% extends layouts %}
+{% from breadcrumb import breadcrumb_field %}
+{% from message import alert_msg %}
+{% block content %}
+{{ alert_msg(reponse, alert) }}
+{{ breadcrumb_field({'Messagerie agents commune': 'dashboard@messagerie_agent'}) }}
+
+<style>
+.wa-wrap{background:#efeae2;border-radius:12px;overflow:hidden;border:1px solid #d7d7d7}
+.wa-side{background:#fff;height:72vh;border-right:1px solid #dcdcdc;overflow:auto}
+.wa-main{height:72vh;display:flex;flex-direction:column}
+.wa-head{background:#f0f2f5;padding:12px 14px;border-bottom:1px solid #dcdcdc}
+.wa-list{padding:8px 0}
+.wa-item{display:block;padding:10px 14px;color:#1f2937;text-decoration:none;border-bottom:1px solid #f1f1f1}
+.wa-item:hover{background:#f7f9fb}
+.wa-badge{float:right;background:#25d366;color:#fff;border-radius:999px;padding:1px 7px;font-size:11px}
+.wa-chat{flex:1;overflow:auto;padding:14px}
+.wa-row{display:flex;margin-bottom:10px}
+.wa-row.me{justify-content:flex-end}
+.wa-bubble{max-width:72%;padding:8px 10px;border-radius:10px;background:#fff;box-shadow:0 1px 1px rgba(0,0,0,.08)}
+.wa-row.me .wa-bubble{background:#d9fdd3}
+.wa-time{font-size:11px;color:#6b7280;text-align:right;margin-top:4px}
+.wa-compose{
+  background:var(--input-textarea-writing-backround,#111b21);
+  padding:10px;
+  border-top:1px solid var(--input-textarea-writing-border,#1f2c33)
+}
+.wa-empty{height:100%;display:flex;align-items:center;justify-content:center;color:#6b7280}
+.wa-new{padding:10px 14px;border-bottom:1px solid #f1f1f1;background:#f8fbff}
+.wa-new a{display:block;padding:8px 10px;border:1px solid #d9e2ec;border-radius:8px;text-decoration:none;color:#1f2937;background:#fff}
+.wa-new a:hover{background:#f2f8ff}
+.wa-link{font-size:20px;color:#0d6efd;text-decoration:none;line-height:1}
+.wa-link:hover{text-decoration:underline}
+.wa-sendbar{display:flex;align-items:center;gap:8px}
+.wa-icon-btn{width:38px;height:38px;border:none;border-radius:50%;background:transparent;color:var(--dashboard-header-text-color,#d1d7db);font-size:24px;line-height:1;display:flex;align-items:center;justify-content:center}
+.wa-icon-btn:hover{background:var(--dashboard-header-background,#202c33);filter:brightness(1.15)}
+.wa-text-wrap{flex:1;background:var(--input-textarea-backround,#2a3942);border-radius:22px;padding:4px 10px}
+.wa-text{width:100%;border:none;background:transparent;color:var(--dashboard-header-text-color,#e9edef);outline:none}
+.wa-text::placeholder{color:var(--dashboard-sidebar-list-item-color,#9aa6ad)}
+.wa-send-btn{width:46px;height:46px;border:none;border-radius:50%;background:var(--breadcrumb-first-background,#25d366);color:var(--breadcrumb-first-color,#ffffff);font-size:20px;display:flex;align-items:center;justify-content:center}
+.wa-send-btn:disabled{opacity:.45;cursor:not-allowed}
+</style>
+
+<div class="container-fluid">
+  <div class="wa-wrap">
+    <div class="row g-0">
+      <div class="col-lg-4 wa-side">
+        <div class="wa-head">
+          <div class="d-flex justify-content-between align-items-center">
+            <strong>Conversations agents</strong>
+            <div>
+              <a class="wa-link" href="{{ __path('dashboard@messagerie_agent') }}?new=1" title="Nouvelle conversation"><i class="bi bi-pencil-square"></i></a>
+              <span class="wa-badge">{{ unread_count|default(0)|e }}</span>
+            </div>
+          </div>
+        </div>
+        {% if new_conversation|default(false) %}
+        <div class="wa-new">
+          {% for c in contacts %}
+          <a href="{{ __path('dashboard@messagerie_agent') }}?new=1&to={{ c.login|e }}">{{ c.full_name|default('-')|e }} - {{ c.login|e }}</a>
+          {% else %}
+          <span class="text-muted">Aucun contact disponible.</span>
+          {% endfor %}
+        </div>
+        {% endif %}
+        <div class="wa-list">
+          {% for m in conversations %}
+          {% set contact_name = m.sender_login|default('') == current_login|default('') ? m.receiver_name|default(m.receiver_login|default('-')) : m.sender_name|default(m.sender_login|default('-')) %}
+          <a class="wa-item" href="{{ __path('dashboard@messagerie_agent') }}?thread={{ m.thread_ref|default('')|e }}">
+            <div>
+              <strong>{{ contact_name|e }}</strong>
+              {% if m.thread_unread|default(0) > 0 %}
+              <span class="wa-badge">{{ m.thread_unread|e }}</span>
+              {% endif %}
+            </div>
+            <div>{{ m.subject|default('Sans objet')|e }}</div>
+          </a>
+          {% else %}
+          <div class="px-3 py-2 text-muted">Aucune conversation.</div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <div class="col-lg-8 wa-main">
+        <div class="wa-head">
+          <strong>{{ conversation_name is not empty ? conversation_name|e : (thread_ref is not empty ? ('Fil: ' ~ thread_ref) : 'Nouvelle conversation') }}</strong>
+          {% if reply_target is not empty %}
+          <div class="small text-muted">Reponse a {{ reply_target.sender_name|default(reply_target.sender_login|default('-'))|e }}</div>
+          {% endif %}
+        </div>
+
+        <div class="wa-chat">
+          {% if thread_messages is not empty %}
+            {% set last_sender = '' %}
+            {% for t in thread_messages %}
+            <div class="wa-row {{ t.sender_login|default('') == current_login|default('') ? 'me' : '' }}">
+              <div class="wa-bubble">
+                {% if t.sender_login|default('') != last_sender %}
+                <div><strong>{{ t.sender_name|default(t.sender_login)|e }}</strong></div>
+                {% endif %}
+                {% if t.subject is not empty %}<div><small>{{ t.subject|e }}</small></div>{% endif %}
+                <div>{{ t.message_text|default('-')|e }}</div>
+                {% if t.attachment_path is not empty %}
+                <div><a target="_blank" href="{{ __host() ~ '/' ~ t.attachment_path|e }}">PDF: {{ t.attachment_name|default('fichier')|e }}</a></div>
+                {% endif %}
+                <div class="wa-time">{{ t.created_at is not empty ? t.created_at|e|dates('d/m/Y H:i') : '-' }}</div>
+              </div>
+            </div>
+            {% set last_sender = t.sender_login|default('') %}
+            {% endfor %}
+          {% else %}
+          <div class="wa-empty">Selectionne une conversation ou envoie un nouveau message.</div>
+          {% endif %}
+        </div>
+
+        <div class="wa-compose">
+          <form method="POST" enctype="multipart/form-data">
+            {{ __csrf() }}
+            <input type="hidden" name="__reply_to__" value="{{ reply_to|default(0)|e }}">
+            <input type="hidden" name="__thread_ref__" value="{{ thread_ref|default('')|e }}">
+            <input type="hidden" name="__subject__" value="">
+            <input type="hidden" name="__to__" value="{{ conversation_to|default('')|e }}">
+            <input type="file" id="agent_attachment" class="d-none" name="__attachment__" accept=".pdf,application/pdf">
+            <div class="wa-sendbar">
+              <button type="button" class="wa-icon-btn" onclick="document.getElementById('agent_attachment').click();" title="Piece jointe">+</button>
+              <div class="wa-text-wrap">
+                <input class="wa-text" type="text" name="__message__" placeholder="{{ conversation_to is not empty ? 'Ecrire un message...' : 'Choisis un contact via l\'icone' }}" {{ conversation_to is empty ? 'disabled' : '' }} required>
+              </div>
+              <button type="submit" name="__send__" value="1" class="wa-send-btn" {{ conversation_to is empty ? 'disabled' : '' }} title="Envoyer">&#10148;</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

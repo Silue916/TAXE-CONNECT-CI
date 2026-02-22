@@ -1,0 +1,128 @@
+{% extends layouts %}
+{% from tools import clock, calendar %}
+{% block content %}
+
+<div class="container-fluid dashboard">
+    <div class="row mb-3">
+        <div class="col-lg-12">
+            <div class="alert alert-info mb-0">
+                Espace compte mairie
+            </div>
+        </div>
+    </div>
+
+    {% if dashboard.warning is not empty %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="alert alert-warning">{{ dashboard.warning|e }}</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-lg-4 mb-3">
+            <div class="card menuUsers">
+                <div class="card-body">
+                    <p class="card-text" id="count"><strong>{{ actors_stats.agents_total|default(0)|e }}</strong></p>
+                </div>
+                <h4 class="card-header"><i class="bi bi-person-badge"></i> Agents</h4>
+            </div>
+        </div>
+        <div class="col-lg-4 mb-3">
+            <div class="card menuUsers">
+                <div class="card-body">
+                    <p class="card-text" id="count"><strong>{{ actors_stats.merchants_total|default(0)|e }}</strong></p>
+                </div>
+                <h4 class="card-header"><i class="bi bi-shop"></i> Commercants</h4>
+            </div>
+        </div>
+        <div class="col-lg-4 mb-3">
+            <div class="card menuUsers">
+                <div class="card-body">
+                    <p class="card-text" id="count"><strong>{{ actors_stats.users_total|default(0)|e }}</strong></p>
+                </div>
+                <h4 class="card-header"><i class="bi bi-people"></i> Total utilisateurs</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Activites de la commune</h5>
+                    {% if commune_activities_message is not empty %}
+                    <div class="alert alert-warning">{{ commune_activities_message|e }}</div>
+                    {% endif %}
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Date</th>
+                                <th>Reference</th>
+                                <th>Acteur</th>
+                                <th>Detail</th>
+                                <th>Montant</th>
+                                <th>Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in commune_activities %}
+                            <tr>
+                                <td>{{ row.activity_type|e }}</td>
+                                <td>{{ row.activity_date is not empty ? row.activity_date|e|dates('d/m/Y H:i') : '-' }}</td>
+                                <td>{{ row.reference_id|default('-')|e }}</td>
+                                <td>{{ row.actor_name|default('-')|e }}</td>
+                                <td>{{ row.details|default('-')|e }}</td>
+                                <td>{{ row.amount is not empty ? row.amount|e ~ ' FCFA' : '-' }}</td>
+                                <td>{{ row.activity_status|default('-')|e }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center">Aucune activite de commune disponible.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-3">
+            <div class="row">
+                <div class="col-lg-12 mb-3">
+                    {{ clock({
+                        days: ["DIM", "LUN", "MAR", "MER", "JEU", "VEN", "SAM"],
+                        lang: "fr-FR"
+                    }) }}
+                </div>
+                <div class="col-lg-12 mb-3">
+                    {{ calendar({ lang: "fr-FR" }) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 mb-3">
+            <div class="card hystory">
+                <div class="card-body">
+                    <h5 class="card-title">Activites recentes</h5>
+                    {% for select in select.usersHistory() %}
+                    <div class="activity">
+                        <div class="activity-item d-flex">
+                            <div class="activite-label">{{ select.dates|e|dates('d/m/Y H:i:s') }}</div>
+                            <i class='bi bi-clock activity-badge text-white align-self-start'></i>
+                            <div class="activity-content">{{ select.label|e }}</div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="mb-0">Aucune activite recente.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

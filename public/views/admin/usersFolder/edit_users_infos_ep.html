@@ -1,0 +1,79 @@
+{% extends layouts %}
+{% from breadcrumb import breadcrumb_field %} 
+{% from forms import input_field, radio_field, submit %} 
+{% from message import alert_msg %}
+{% block content %}
+{{ alert_msg( reponse, alert ) }}
+{{ breadcrumb_field( 'MES INFORMATIONS PERSONNELLES' )}}
+
+   <div class="container">
+        <form id="signatureForm" class="laodForm" method="POST" novalidate>
+            <div class="row g-3">
+
+                {{ __csrf() }} 
+
+                {% for select in select %} 
+                    <div class="col-md-12">
+                        {{ input_field(
+                            {
+                                upper : true,
+                                maxlength : 70 , 
+                                require : true , 
+                                character : "string" ,
+                                name : '__username__' , 
+                                label : 'Nom et prenom' , 
+                                value : select.namesurname|toiso , 
+                                feedback : 'Veuillez saisir votre nom et prenom puis continuer.' ,
+                            })
+                        }} 
+                    </div>
+                    
+                    <div class="col-md-12">
+                        {{ input_field(
+                            {
+                                maxlength: 100 , 
+                                require : true , 
+                                type : 'email' , 
+                                name : '__email__' ,       
+                                label : 'Votre email' , 
+                                value : select.email|e ,
+                                feedback : 'Veuillez saisir votre email puis continuer.' ,
+                            }) 
+                        }}     
+                    </div>
+                    
+                    <div class="col-md-10">
+                        {{ input_field(
+                            { 
+                                maxlength : 10 , 
+                                require : true , 
+                                name : '__contact__' , 
+                                character : "numeric" ,
+                                label : 'Numero de telephone' , 
+                                value : select.contact|e ,
+                                feedback : 'Veuillez saisir votre numero de telephone puis continuer.' , 
+                            })  
+                        }}
+                    </div> 
+
+                    <div class="col-md-2">
+                        {{ radio_field({
+                            mainLabel : 'Methode OTP',
+                            name: '__otpStatus__',
+                            label: ['Actif', 'Desactive'],
+                            values: [ 1, 0],
+                            checked: select.otp|e
+                        }) }}
+                    </div>   
+
+                    <div class="col-md-12">
+                        {{ submit({
+                            label : 'Enregistrer mes informations',
+                            icon : 'bi bi-pen'
+                        }) }}
+                    </div>
+                {% endfor %}
+            </div>
+        </form>
+   </div>
+{% endblock %}

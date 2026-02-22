@@ -1,0 +1,86 @@
+{% extends layouts %}
+{% from breadcrumb import breadcrumb_field %}
+{% from forms import input_field, submit %}
+{% from message import alert_msg %}
+{% block content %}
+{{ alert_msg(reponse, alert) }}
+{{ breadcrumb_field('CREATE MAIRIE ACCOUNT') }}
+
+<div class="container">
+    <form method="POST">
+        {{ __csrf() }}
+
+        <div class="row g-3">
+            <div class="col-md-6">
+                {{ input_field({
+                    name: '__commune_code__',
+                    label: 'Commune code',
+                    require: true,
+                    maxlength: 20,
+                    feedback: 'Required'
+                }) }}
+            </div>
+            <div class="col-md-6">
+                {{ input_field({
+                    name: '__commune_name__',
+                    label: 'Commune name',
+                    require: true,
+                    maxlength: 120,
+                    feedback: 'Required'
+                }) }}
+            </div>
+
+            <div class="col-md-6">
+                {{ input_field({
+                    name: '__full_name__',
+                    label: 'Mairie admin full name',
+                    require: true,
+                    maxlength: 160,
+                    feedback: 'Required'
+                }) }}
+            </div>
+            <div class="col-md-6">
+                {{ input_field({
+                    name: '__login__',
+                    label: 'Mairie admin login',
+                    require: true,
+                    maxlength: 80,
+                    feedback: 'Required'
+                }) }}
+            </div>
+
+            <div class="col-md-6">
+                {{ input_field({
+                    type: 'password',
+                    name: '__password__',
+                    label: 'Temporary password',
+                    require: true,
+                    feedback: 'Required'
+                }) }}
+            </div>
+            <div class="col-md-6">
+                {{ input_field({
+                    type: 'email',
+                    name: '__email__',
+                    label: 'Email',
+                    maxlength: 190
+                }) }}
+            </div>
+
+            <div class="col-md-6">
+                {{ input_field({
+                    name: '__phone__',
+                    label: 'Phone'
+                }) }}
+            </div>
+
+            <div class="col-md-12">
+                {{ submit({
+                    label: 'Create mairie account',
+                    icon: 'bi bi-building-add'
+                }) }}
+            </div>
+        </div>
+    </form>
+</div>
+{% endblock %}

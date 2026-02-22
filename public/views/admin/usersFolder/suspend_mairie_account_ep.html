@@ -1,0 +1,97 @@
+{% extends layouts %}
+{% from breadcrumb import breadcrumb_field %}
+{% from message import alert_msg %}
+{% block content %}
+{{ alert_msg(reponse, alert) }}
+{{ breadcrumb_field('DESACTIVER UN COMPTE MAIRIE') }}
+
+<div class="container">
+    <form method="POST" class="mb-4">
+        {{ __csrf() }}
+        <div class="row g-3 align-items-end">
+            <div class="col-md-8">
+                <label for="commune_name" class="form-label">Nom de la commune</label>
+                <input
+                    type="text"
+                    id="commune_name"
+                    name="__commune_name__"
+                    class="form-control"
+                    value="{{ commune_name|default('')|e }}"
+                    required
+                >
+            </div>
+            <div class="col-md-4">
+                <button type="submit" name="__search__" value="1" class="btn btn-primary w-100">
+                    Rechercher le compte mairie
+                </button>
+            </div>
+        </div>
+    </form>
+
+    {% if scope is not empty %}
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">Informations du compte mairie</h5>
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>Commune</th>
+                        <td>{{ scope.commune_name|default('-')|e }}</td>
+                    </tr>
+                    <tr>
+                        <th>Code commune</th>
+                        <td>{{ scope.commune_code|default('-')|e }}</td>
+                    </tr>
+                    <tr>
+                        <th>Login mairie</th>
+                        <td>{{ scope.mairie_login|default('-')|e }}</td>
+                    </tr>
+                    <tr>
+                        <th>Responsable</th>
+                        <td>{{ scope.mairie_full_name|default('-')|e }}</td>
+                    </tr>
+                    <tr>
+                        <th>Statut actuel</th>
+                        <td>{{ scope.mairie_status|default('-')|e }}</td>
+                    </tr>
+                    <tr>
+                        <th>Agents lies</th>
+                        <td>{{ scope.agents_total|default(0)|e }}</td>
+                    </tr>
+                    <tr>
+                        <th>Commercants lies</th>
+                        <td>{{ scope.merchants_total|default(0)|e }}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="alert alert-warning">
+                Suspension: le compte mairie ne pourra plus se connecter tant qu'il est desactive.
+            </div>
+
+            <form method="POST" class="row g-3">
+                {{ __csrf() }}
+                <input type="hidden" name="__commune_name__" value="{{ scope.commune_name|e }}">
+                <div class="col-md-6">
+                    <label for="confirm_word" class="form-label">Tape SUSPENDRE pour desactiver</label>
+                    <input type="text" id="confirm_word" name="__confirm_word__" class="form-control" required>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" name="__suspend__" value="1" class="btn btn-danger w-100">
+                        Desactiver le compte
+                    </button>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" name="__reactivate__" value="1" class="btn btn-success w-100">
+                        Reactiver le compte
+                    </button>
+                </div>
+                <div class="col-md-12">
+                    <small class="text-muted">Pour reactivation, saisis ACTIVER dans le meme champ.</small>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

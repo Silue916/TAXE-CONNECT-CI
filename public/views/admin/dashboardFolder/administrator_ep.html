@@ -1,0 +1,167 @@
+{% extends layouts %}
+{% from tools import clock, calendar %}
+{% block content %}
+
+<div class="container-fluid dashboard">
+    <div class="row mb-3">
+        <div class="col-lg-12 d-flex gap-2 flex-wrap">
+            <a class="btn btn-primary" href="{{ __path('dashboard@contribuables') }}">Registre des contribuables</a>
+            <a class="btn btn-primary" href="{{ __path('dashboard@transactions') }}">Transactions</a>
+            <a class="btn btn-outline-primary" href="{{ __path('users@all_users_list') }}">Utilisateurs plateforme</a>
+            <a class="btn btn-outline-primary" href="{{ __path('setting@list_of_recent_actions') }}">Journal d'activites</a>
+        </div>
+    </div>
+
+    {% if dashboard.warning is not empty %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="alert alert-warning">{{ dashboard.warning|e }}</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-lg-3 mb-3">
+            <div class="card menuUsers">
+                <div class="card-body">
+                    <p class="card-text" id="count"><strong>{{ dashboard.total_contributors|e }}</strong></p>
+                </div>
+                <h4 class="card-header"><i class="bi bi-building"></i> Contribuables enregistres</h4>
+            </div>
+        </div>
+        <div class="col-lg-3 mb-3">
+            <div class="card menuUsers">
+                <div class="card-body">
+                    <p class="card-text" id="count"><strong>{{ dashboard.active_contributors|e }}</strong></p>
+                </div>
+                <h4 class="card-header"><i class="bi bi-check-circle"></i> Actifs</h4>
+            </div>
+        </div>
+        <div class="col-lg-3 mb-3">
+            <div class="card menuUsers">
+                <div class="card-body">
+                    <p class="card-text" id="count"><strong>{{ dashboard.total_notices|e }}</strong></p>
+                </div>
+                <h4 class="card-header"><i class="bi bi-receipt"></i> Avis de taxe emis</h4>
+            </div>
+        </div>
+        <div class="col-lg-3 mb-3">
+            <div class="card menuUsers">
+                <div class="card-body">
+                    <p class="card-text" id="count"><strong>{{ dashboard.collection_rate|e }}%</strong></p>
+                </div>
+                <h4 class="card-header"><i class="bi bi-graph-up"></i> Taux de recouvrement</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Performance de collecte</h5>
+                    <div class="mb-2">
+                        <small>Encaissement / Assiette</small>
+                        <div class="progress">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: {{ dashboard.collection_rate|e }}%" aria-valuenow="{{ dashboard.collection_rate|e }}" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4"><strong>Assiette:</strong> {{ dashboard.assessed_amount|e }} FCFA</div>
+                        <div class="col-md-4"><strong>Encaisse:</strong> {{ dashboard.paid_amount|e }} FCFA</div>
+                        <div class="col-md-4"><strong>Restant:</strong> {{ dashboard.outstanding_amount|e }} FCFA</div>
+                    </div>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-4"><strong>Avis impayes:</strong> {{ dashboard.unpaid_notices|e }}</div>
+                        <div class="col-md-4"><strong>Avis en retard:</strong> {{ dashboard.overdue_notices|e }}</div>
+                        <div class="col-md-4"><strong>En attente validation:</strong> {{ dashboard.pending_contributors|e }}</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4 mb-3">
+            <div class="row">
+                <div class="col-lg-12 mb-3">
+                    {{ clock({
+                        days: ["DIM", "LUN", "MAR", "MER", "JEU", "VEN", "SAM"],
+                        lang: "fr-FR"
+                    }) }}
+                </div>
+                <div class="col-lg-12 mb-3">
+                    {{ calendar({ lang: "fr-FR" }) }}
+                </div>
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Acces rapide</h5>
+                            <ul class="mb-0">
+                                <li><a href="{{ __path('dashboard@contribuables') }}">Registre contribuables</a></li>
+                                <li><a href="{{ __path('dashboard@transactions') }}">Transactions</a></li>
+                                <li><a href="{{ __path('setting@list_of_user_rights_management') }}">Droits d'acces</a></li>
+                                <li><a href="{{ __path('setting@list_of_recent_actions') }}">Historique d'activites</a></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-7 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Paiements recents</h5>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Recu</th>
+                                <th>Commercant</th>
+                                <th>Montant</th>
+                                <th>Canal</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for payment in dashboard.recent_payments %}
+                            <tr>
+                                <td>{{ payment.receipt_ref|e }}</td>
+                                <td>{{ payment.merchant_id|e }}</td>
+                                <td>{{ payment.amount|e }} FCFA</td>
+                                <td>{{ payment.channel|e }}</td>
+                                <td>{{ payment.paid_at|e|dates('d/m/Y H:i') }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="5" class="text-center">Aucun paiement recense.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-5 mb-3">
+            <div class="card hystory">
+                <div class="card-body">
+                    <h5 class="card-title">Activites recentes</h5>
+                    {% for select in select.usersHistory() %}
+                    <div class="activity">
+                        <div class="activity-item d-flex">
+                            <div class="activite-label">{{ select.dates|e|dates('d/m/Y H:i:s') }}</div>
+                            <i class='bi bi-clock activity-badge text-white align-self-start'></i>
+                            <div class="activity-content">{{ select.label|e }}</div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="mb-0">Aucune activite recente.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

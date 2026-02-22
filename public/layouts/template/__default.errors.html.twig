@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+    <head><meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>{% block title %}{% endblock %}</title>
+        <link rel="stylesheet" type="text/css" href="{{ __css('bootstrap/4.0/bootstrap') }}">
+        <link href="{{ __cssbsico('bootstrap-icons') }}" rel="stylesheet" type="text/css">
+        <link href="{{ __cssiconfont('icofont.min') }}" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" type="text/css" href="{{ __css('default/default.errors') }}">
+            <script src="{{ __js('jquery/jquery.min') }}"></script>
+        <link rel="icon" href="{{ __img('logo_o.png') }}">
+    </head>
+    <body>
+        <!-- ======= Main content ======= --> 
+        {% block content %}{% endblock %}
+        <!-- ======= End Main content ======= --> 
+        <script src="{{ __js('jquery/jquery.default.main') }}"></script>
+        <script src="{{ __js('jquery/jquery') }}"></script>
+    </body>
+</html>

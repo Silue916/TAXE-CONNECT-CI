@@ -1,0 +1,66 @@
+{% extends layouts %}
+{% from ajax import send_ajax_request, get_ajax_request %}
+{% from forms import input_field, submit %}
+{% from breadcrumb import breadcrumb_field %} 
+{% from tools import recognition %} 
+{% block content %}
+{{ breadcrumb_field('EPAPHRODITES CHATBOT MODEL ONE' )}}
+
+  <div class="container">
+    <div class="chat-bot-content">
+      <div class="conversation"></div>
+        <div class="input-group">
+
+          {{ submit(
+            {
+              icon : 'bi bi-mic',
+              color : 'transparent',
+              id : 'startButtonVoice',
+              mainClass : 'input-group-prepend'
+            }
+          )}}
+
+          {{ input_field(
+            {
+              require : true ,
+              name : '__send__' ,
+              id : '__send__' ,
+              placeholder : 'Message to Epaphrodites Bot...'
+            }
+          )}}
+
+          {{ submit(
+            {
+              icon : 'bi bi-arrow-up-circle-fill',
+              color : 'transparent',
+              id : 'sendMessages',
+              mainClass : 'input-group-prepend'
+            }
+          )}}
+
+        </div>
+      </div>
+  </div>
+
+  {{ send_ajax_request({
+    method : "POST",
+    url : "chats@start_chatbot_model_one",
+    value : ['__send__'],
+    submit : '#sendMessages',
+    msg : '.conversation'
+  }) }}
+
+  {{ get_ajax_request({
+    method : "POST",
+    url : "chats@start_chatbot_model_one",
+    msg : '.conversation',
+    type : 'html'
+  }) }}
+
+  {{
+    recognition({
+      button : "startButtonVoice",
+      field : "__send__"
+    })
+  }}
+{% endblock %}

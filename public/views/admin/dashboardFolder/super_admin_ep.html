@@ -1,0 +1,125 @@
+{% extends layouts %}
+{% from tools import clock, calendar %}
+{% block content %}
+
+<div class="container-fluid dashboard">
+    {% if dashboard.warning is not empty %}
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="alert alert-warning">{{ dashboard.warning|e }}</div>
+        </div>
+    </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-lg-3 mb-3">
+            <div class="card menuUsers">
+                <div class="card-body">
+                    <p class="card-text" id="count"><strong>{{ actors_stats.mairies_total|default(0)|e }}</strong></p>
+                </div>
+                <h4 class="card-header"><i class="bi bi-building"></i> Compte mairie</h4>
+            </div>
+        </div>
+        <div class="col-lg-3 mb-3">
+            <div class="card menuUsers">
+                <div class="card-body">
+                    <p class="card-text" id="count"><strong>{{ actors_stats.agents_total|default(0)|e }}</strong></p>
+                </div>
+                <h4 class="card-header"><i class="bi bi-person-badge"></i> Agent</h4>
+            </div>
+        </div>
+        <div class="col-lg-3 mb-3">
+            <div class="card menuUsers">
+                <div class="card-body">
+                    <p class="card-text" id="count"><strong>{{ actors_stats.merchants_total|default(0)|e }}</strong></p>
+                </div>
+                <h4 class="card-header"><i class="bi bi-shop"></i> Commercant</h4>
+            </div>
+        </div>
+        <div class="col-lg-3 mb-3">
+            <div class="card menuUsers">
+                <div class="card-body">
+                    <p class="card-text" id="count"><strong>{{ actors_stats.users_total|default(0)|e }}</strong></p>
+                </div>
+                <h4 class="card-header"><i class="bi bi-people"></i> Total utilisateurs</h4>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-8 mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Communes / Comptes Mairie / Agents</h5>
+                    {% if commune_board_message is not empty %}
+                    <div class="alert alert-warning">{{ commune_board_message|e }}</div>
+                    {% endif %}
+                    <table class="table table-bordered mb-0">
+                        <thead>
+                            <tr>
+                                <th>Commune</th>
+                                <th>Code</th>
+                                <th>Compte mairie</th>
+                                <th>Responsable</th>
+                                <th>Statut</th>
+                                <th>Agents</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for row in commune_board %}
+                            <tr>
+                                <td>{{ row.commune_name|e }}</td>
+                                <td>{{ row.commune_code|e }}</td>
+                                <td>{{ row.mairie_login is not empty ? row.mairie_login|e : '-' }}</td>
+                                <td>{{ row.mairie_full_name is not empty ? row.mairie_full_name|e : '-' }}</td>
+                                <td>{{ row.mairie_status is not empty ? row.mairie_status|e : 'NON CREE' }}</td>
+                                <td>{{ row.agents_total|e }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center">Aucune commune enregistree.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4 mb-3">
+            <div class="row">
+                <div class="col-lg-12 mb-3">
+                    {{ clock({
+                        days: ["DIM", "LUN", "MAR", "MER", "JEU", "VEN", "SAM"],
+                        lang: "fr-FR"
+                    }) }}
+                </div>
+                <div class="col-lg-12 mb-3">
+                    {{ calendar({ lang: "fr-FR" }) }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12 mb-3">
+            <div class="card hystory">
+                <div class="card-body">
+                    <h5 class="card-title">Activites recentes</h5>
+                    {% for select in select.usersHistory() %}
+                    <div class="activity">
+                        <div class="activity-item d-flex">
+                            <div class="activite-label">{{ select.dates|e|dates('d/m/Y H:i:s') }}</div>
+                            <i class='bi bi-clock activity-badge text-white align-self-start'></i>
+                            <div class="activity-content">{{ select.label|e }}</div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <p class="mb-0">Aucune activite recente.</p>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

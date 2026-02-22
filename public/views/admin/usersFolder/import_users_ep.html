@@ -1,0 +1,39 @@
+{% extends layouts %}
+{% from forms import import_field, submit, select_field %} 
+{% from breadcrumb import breadcrumb_field %} 
+{% from message import alert_msg %}
+{% block content %} 
+{{ alert_msg( reponse, alert ) }}
+{{ breadcrumb_field( 'IMPORTER DES UTILISATEURS' )}} 
+
+    <div class="container">
+        <form class="laodForm" method="POST" novalidate name="frmExcelImport" enctype="multipart/form-data">
+        
+            {{ __csrf() }}
+            <p>En-tete de colonne attendu ( <strong>users</strong> )</p>
+            {{ select_field({
+                label:"GROUPE UTILISATEURS",
+                name : "__group__",
+                value : "_id",
+                selected : "label",
+                datas : data.usersGroup(),
+                require : true })
+            }}
+    
+            {{ import_field({
+                name : '__file__', 
+                id : 'file' , 
+                accept : '.xls,.xlsx,.csv,.ods',
+                require : true,
+                feedback : "Ce champ est obligatoire." }) 
+            }}
+    
+            {{ submit({
+                label : 'Importer les utilisateurs',
+                icon : 'bi bi-upload'
+            }) }} 
+    
+        </form>
+    </div>
+
+{% endblock %}

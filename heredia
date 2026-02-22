@@ -1,0 +1,17 @@
+<?php
+
+require 'bin/config/SetDirectory.php';
+
+if (!file_exists(_DIR_VENDOR_.'/autoload.php')) {
+	die("Please install the depencencies with 'composer update'");
+}
+
+require _DIR_VENDOR_.'/autoload.php';
+
+$app = new Symfony\Component\Console\Application;
+
+$Kernel = new Epaphrodites\Console\ConsoleKernel;
+
+$app->addCommands($Kernel->GetConsolesCommands());
+
+$app->run();

@@ -1,0 +1,362 @@
+/*--------------------------------------------------------------
+# IMPORT CSS
+--------------------------------------------------------------*/
+@import url('default.epaphrodites.style.css');
+
+/*--------------------------------------------------------------
+# PORTAL THEME
+--------------------------------------------------------------*/
+body {
+    background: #f4f7f2;
+    color: #0f172a;
+}
+
+.tx-public-header {
+    background: #0f5132;
+    border-bottom: 4px solid #eab308;
+    padding: 10px 0;
+}
+
+.tx-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.tx-brand img {
+    width: 34px;
+    height: 34px;
+}
+
+.tx-public-nav a {
+    color: #ffffff;
+    margin-left: 18px;
+    font-weight: 600;
+}
+
+.tx-public-nav a:hover {
+    color: #fde68a;
+}
+
+.tx-hero {
+    background: linear-gradient(130deg, #0f5132 0%, #166534 40%, #064e3b 100%);
+    color: #ffffff;
+    padding: 70px 0 60px;
+}
+
+.tx-kicker {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 12px;
+    color: #fde68a;
+    margin-bottom: 8px;
+}
+
+.tx-hero h1 {
+    font-size: 42px;
+    line-height: 1.1;
+    margin-bottom: 15px;
+}
+
+.tx-lead {
+    font-size: 17px;
+    max-width: 700px;
+    margin-bottom: 20px;
+}
+
+.tx-cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.tx-btn {
+    display: inline-block;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-weight: 700;
+}
+
+.tx-btn-primary {
+    background: #eab308;
+    color: #111827;
+}
+
+.tx-btn-primary:hover {
+    color: #111827;
+    background: #facc15;
+}
+
+.tx-btn-outline {
+    border: 1px solid #ffffff;
+    color: #ffffff;
+}
+
+.tx-btn-outline:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+}
+
+.tx-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tx-badges span {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+}
+
+.tx-hero-card {
+    background: #ffffff;
+    color: #111827;
+    border-radius: 14px;
+    padding: 20px;
+    box-shadow: 0 18px 30px rgba(0, 0, 0, 0.25);
+}
+
+.tx-hero-card h4 {
+    font-weight: 700;
+    margin-bottom: 10px;
+}
+
+.tx-hero-card ul {
+    margin-bottom: 12px;
+    padding-left: 18px;
+}
+
+.tx-hero-card li {
+    margin-bottom: 6px;
+}
+
+.tx-qrcode {
+    text-align: center;
+}
+
+.tx-section {
+    padding: 45px 0;
+}
+
+.tx-title {
+    font-size: 30px;
+    margin-bottom: 18px;
+}
+
+.tx-service-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-left: 4px solid #0f5132;
+    border-radius: 10px;
+    padding: 16px;
+    height: 100%;
+}
+
+.tx-service-card h5 {
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.tx-flow {
+    background: #eef6ee;
+}
+
+.tx-step {
+    background: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #d1fae5;
+    padding: 16px;
+    text-align: center;
+    height: 100%;
+}
+
+.tx-step span {
+    display: inline-flex;
+    width: 32px;
+    height: 32px;
+    border-radius: 999px;
+    justify-content: center;
+    align-items: center;
+    background: #065f46;
+    color: #ffffff;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.tx-alert {
+    background: #7f1d1d;
+    color: #ffffff;
+    padding: 28px 0;
+}
+
+.tx-alert h3 {
+    margin-bottom: 8px;
+}
+
+.tx-public-footer {
+    margin-top: 30px;
+    background: #111827;
+    color: #e5e7eb;
+    padding: 30px 0 20px;
+}
+
+.tx-public-footer h6 {
+    color: #f8fafc;
+    font-weight: 700;
+}
+
+.tx-public-footer ul {
+    padding-left: 16px;
+    margin-bottom: 0;
+}
+
+.tx-public-footer a {
+    color: #bfdbfe;
+}
+
+/*--------------------------------------------------------------
+# LOGIN
+--------------------------------------------------------------*/
+.tx-login-side {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #d1d5db;
+    padding: 24px;
+    margin-top: 45px;
+}
+
+.tx-login-side h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.tx-login-side ul {
+    padding-left: 18px;
+    margin-top: 8px;
+}
+
+.tx-login-help {
+    margin-top: 15px;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: 8px;
+    padding: 12px;
+}
+
+.login {
+    margin: 45px auto 40px;
+    width: 100%;
+    box-shadow: var(--box-shadow-three);
+    padding: 17px;
+    background: #ffffff;
+    border-radius: 10px;
+}
+
+.secure img {
+    width: 120px;
+    margin-top: -40px;
+}
+
+.texthead {
+    font-size: 20px;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+#authentification .form-control {
+    color: #646464;
+    border: 1px solid #e6e6e6;
+    border-radius: 3px;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+    -webkit-transition: all 0.15s ease-out;
+    transition: all 0.15s ease-out;
+}
+
+#authentification .form-control:focus {
+    border-color: #ccc;
+    background-color: #fcfcfc;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
+
+#authentification .form-control {
+    padding-left: 0;
+    padding-right: 0;
+    border: 0;
+    border-radius: 0;
+    background-color: transparent;
+    -webkit-box-shadow: 0 1px 0 #e6e6e6;
+    box-shadow: 0 1px 0 #e6e6e6;
+    margin-bottom: 14px;
+}
+
+#authentification .form-control:focus {
+    background-color: transparent;
+    -webkit-box-shadow: 0 2px 0 #646464;
+    box-shadow: 0 2px 0 #646464;
+}
+
+.epaphrodite {
+    margin-top: 5px;
+    margin-bottom: 25px;
+}
+
+.epaphrodite a {
+    text-decoration: none;
+    text-align: center;
+    padding: 10px 24px;
+    background: #0f5132;
+    border: 1px solid #0f5132;
+    border-radius: 40px;
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.epaphrodite a:hover {
+    background: #064e3b;
+    color: #ffffff;
+}
+
+@media (max-width: 991px) {
+    .tx-hero {
+        padding-top: 45px;
+    }
+
+    .tx-hero h1 {
+        font-size: 34px;
+    }
+
+    .tx-public-nav a {
+        margin-left: 10px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 767px) {
+    .tx-public-header .container {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .tx-public-nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .tx-hero h1 {
+        font-size: 30px;
+    }
+
+    .login {
+        margin: 25px auto;
+        width: 100%;
+    }
+}

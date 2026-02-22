@@ -1,0 +1,68 @@
+{% extends layouts %}
+{% from breadcrumb import breadcrumb_field %}
+{% block content %}
+{{ breadcrumb_field({'Mes avis de taxe': 'dashboard@mes_avis'}) }}
+
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-1">Total avis</h5>
+                    <p class="mb-0"><strong>{{ stats.total_notices|default(0)|e }}</strong></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-1">Avis payes</h5>
+                    <p class="mb-0"><strong>{{ stats.paid_notices|default(0)|e }}</strong></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title mb-1">Avis impayes</h5>
+                    <p class="mb-0"><strong>{{ stats.unpaid_notices|default(0)|e }}</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Liste de mes avis de taxe</h5>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Avis</th>
+                        <th>Periode</th>
+                        <th>Montant du</th>
+                        <th>Statut</th>
+                        <th>Echeance</th>
+                        <th>Date creation</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for notice in notices %}
+                    <tr>
+                        <td>{{ notice.notice_ref|e }}</td>
+                        <td>{{ notice.fiscal_period|e }}</td>
+                        <td>{{ notice.amount_due|e }} FCFA</td>
+                        <td>{{ notice.status|e }}</td>
+                        <td>{{ notice.due_date is not empty ? notice.due_date|e|dates('d/m/Y') : '-' }}</td>
+                        <td>{{ notice.created_at is not empty ? notice.created_at|e|dates('d/m/Y H:i') : '-' }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">Aucun avis de taxe trouve.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

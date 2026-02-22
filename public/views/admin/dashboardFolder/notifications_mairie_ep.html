@@ -1,0 +1,63 @@
+{% extends layouts %}
+{% from breadcrumb import breadcrumb_field %}
+{% block content %}
+{{ breadcrumb_field({'Notifications mairie': 'dashboard@notifications_mairie'}) }}
+<style>
+.msg-link{font-size:12px;color:#0d6efd;text-decoration:none;margin-right:10px}
+.msg-link:hover{text-decoration:underline}
+</style>
+
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col-lg-12">
+            <div class="alert alert-info mb-0">
+                Total notifications non lues: <strong>{{ unread_count|default(0)|e }}</strong>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Messages non lus</h5>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Expediteur</th>
+                        <th>Objet</th>
+                        <th>Message</th>
+                        <th>Piece jointe</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for m in notifications %}
+                    <tr>
+                        <td>{{ m.created_at is not empty ? m.created_at|e|dates('d/m/Y H:i') : '-' }}</td>
+                        <td>{{ m.sender_name|default(m.sender_login|default('-'))|e }}</td>
+                        <td>{{ m.subject|default('-')|e }}</td>
+                        <td>{{ m.message_text|default('-')|e }}</td>
+                        <td>
+                            {% if m.attachment_path is not empty %}
+                            <a target="_blank" href="{{ __host() ~ '/' ~ m.attachment_path|e }}">{{ m.attachment_name|default('PDF')|e }}</a>
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a class="msg-link" href="{{ __path('dashboard@notifications_mairie') }}?read={{ m.id|e }}&src={{ m.message_source|default('agent')|e }}">Marquer lu</a>
+                            <a class="msg-link" href="{{ __path('dashboard@messagerie_mairie') }}?thread={{ m.thread_ref|default('')|e }}&src={{ m.message_source|default('agent')|e }}">Fil</a>
+                            <a class="msg-link" href="{{ __path('dashboard@notifications_mairie') }}?delete={{ m.id|e }}&src={{ m.message_source|default('agent')|e }}">Supprimer</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">Aucune notification.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

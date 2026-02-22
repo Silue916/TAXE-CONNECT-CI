@@ -1,0 +1,79 @@
+{% extends layouts %}
+{% from breadcrumb import breadcrumb_field %}
+{% from message import alert_msg %}
+{% block content %}
+{{ alert_msg(reponse, alert) }}
+{{ breadcrumb_field('ATTRIBUTION TAXE AU COMMERÇANT') }}
+
+<div class="container">
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">Attribuer une taxe</h5>
+            <form method="POST" class="row g-3">
+                {{ __csrf() }}
+                <div class="col-md-6">
+                    <label for="merchant_ref" class="form-label">Commercant</label>
+                    <select id="merchant_ref" name="__merchant_ref__" class="form-control" required>
+                        <option value="">Selectionner un commercant</option>
+                        {% for merchant in merchants %}
+                        <option value="{{ merchant.merchant_ref|e }}">
+                            {{ merchant.business_name|default('-')|e }} - {{ merchant.owner_name|default('-')|e }} ({{ merchant.merchant_ref|e }})
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="tax_id" class="form-label">Type de taxe</label>
+                    <select id="tax_id" name="__tax_id__" class="form-control" required>
+                        <option value="">Selectionner une taxe</option>
+                        {% for tax in taxes %}
+                        <option value="{{ tax.id|e }}">
+                            {{ tax.code|e }} - {{ tax.label|e }} ({{ tax.amount|e }} FCFA)
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-primary">
+                        Attribuer la taxe
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Historique des attributions</h5>
+            <table class="table table-bordered mb-0">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Commercant</th>
+                        <th>Reference</th>
+                        <th>Taxe</th>
+                        <th>Montant</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in assignments %}
+                    <tr>
+                        <td>{{ row.assigned_at is not empty ? row.assigned_at|e|dates('d/m/Y H:i') : '-' }}</td>
+                        <td>{{ row.business_name|default('-')|e }}</td>
+                        <td>{{ row.merchant_ref|default('-')|e }}</td>
+                        <td>{{ row.tax_code|default('-')|e }} - {{ row.tax_label|default('-')|e }}</td>
+                        <td>{{ row.tax_amount|default(0)|e }} FCFA</td>
+                        <td>{{ row.status|default('-')|e }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center">Aucune attribution de taxe pour le moment.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

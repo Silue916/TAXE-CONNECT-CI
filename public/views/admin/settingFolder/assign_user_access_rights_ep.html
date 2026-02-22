@@ -1,0 +1,74 @@
+{% extends layouts %}
+{% from forms import input_field, multiSelect_field, submit %}
+{% from breadcrumb import breadcrumb_field %} 
+{% from message import alert_msg %}
+{% block content %} 
+{{ alert_msg( reponse , alert ) }}
+{{ breadcrumb_field( 
+    { 
+        "GESTION DES DROITS UTILISATEURS" : "setting@management_of_user_access_rights" ,
+        "AFFECTATION DES DROITS UTILISATEURS" : null 
+    } 
+)}}
+
+    <div class="container">
+        <form class="laodForm" method="POST" novalidate>
+            {{ __csrf() }}
+            <div class="row g-3">
+                <div class="col-12">
+                    {{ input_field( 
+                        {
+                            disabled : true,
+                            name : '__group__', 
+                            label : 'Groupe utilisateurs' , 
+                            maxlength : 50 , 
+                            require : true , 
+                            value : usersSelected
+                        })
+                    }}
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group multiSelectForm">
+                        <div class="dropdown">
+                            <button class="btn w-100" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown">
+                                ------ Liste des pages ------
+                                <i class="bi-chevron-down"></i>
+                            </button>
+                            <div class="dropdown-menu dropdownEpaphroditesSelector w-100" aria-labelledby="dropdownMenuButton">
+                                <fieldset>
+                                    {% for selected in select.YedidiahRightList() %}
+                                        {% set counter = (counter | default(0) + 1) %}
+                                        <div class="form-check">
+                                            <input type="checkbox" class="form-check-input" id="option_{{ counter }}" name="__rights__[]" value="{{ selected.apps ~ '@' ~ selected.path }}" tabindex="0">
+                                            <label class="form-check-label" for="option_{{ counter }}">
+                                                {{ select.ModulesLists(selected.apps) ~ ' | ' ~ selected.libelle }}
+                                            </label>
+                                        </div>
+                                    {% endfor %}
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label>Autorisations</label>
+                        <select class="form-select custom-select selecteur" name="__actions__" required>
+                        {% for data in data.autorisation() %}
+                            {% set counter = (counter | default (0)+1) %}
+                                <option value="{{ counter|e-1 }}">{{ data }}</option>
+                        {% endfor %}
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    {{ submit({
+                        label : 'Affecter le droit',
+                        icon : 'bi bi-key'
+                    }) }}                       
+                </div>
+            </div>
+        </form>            
+    </div>
+    
+{% endblock %}

@@ -1,0 +1,56 @@
+<IfModule mod_rewrite.c>
+    <IfModule mod_negotiation.c>
+        # Follow symbolic links
+        Options -Indexes +FollowSymLinks
+    </IfModule>
+
+    # Enable overwrite mode on Apache
+    RewriteEngine On
+
+    # Redirect to https or http
+    # RewriteCond %{HTTPS} off
+    # RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+    # Handle Authorization Header
+    RewriteCond %{HTTP:Authorization} .
+    RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+    # Redirect To Trailing Slashes If Not A Folder Or A File...
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_URI} !(/$|\.)
+    RewriteRule (.*) %{REQUEST_URI}/ [R=301,L]
+
+    # Rewrite Rules
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-l
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ index.php [L]
+
+    # Handling 403, 404, and 500 server errors
+    ErrorDocument 403 /error/403.php
+    ErrorDocument 404 /error/404.php
+    ErrorDocument 500 /error/500.php
+    ErrorDocument 504 /error/504.php
+    ErrorDocument 502 /error/502.php
+
+    # Completely block access to the bin directory
+    RewriteRule ^bin/ - [F,L]
+
+    # Prevent access to specific sensitive files
+    <FilesMatch "\.(env|ini|log|json|sqlite|toml|xml|config|lock)$">
+        Require all denied
+    </FilesMatch>
+
+    # Additional protection for certain directories
+    <Directory "bin">
+        <FilesMatch "\.(ini|json|sqlite|toml|xml)$">
+            Require all denied
+        </FilesMatch>
+    </Directory>
+
+    # Deny access to unnecessary files and directories
+    <FilesMatch "^(heredia|zaouly|kouadio|bin/|public/|vendor/|tests/|static/|error/|README.md|.gitignore|composer.json|composer.lock|package.json|phpunit.xml|.gitattributes|robots.txt|counter.json)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>

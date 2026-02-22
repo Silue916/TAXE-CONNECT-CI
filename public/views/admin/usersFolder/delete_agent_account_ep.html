@@ -1,0 +1,71 @@
+{% extends layouts %}
+{% from breadcrumb import breadcrumb_field %}
+{% from message import alert_msg %}
+{% block content %}
+{{ alert_msg(reponse, alert) }}
+{{ breadcrumb_field('SUPPRESSION COMPTE AGENT') }}
+
+<div class="container">
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">Agents de ma commune</h5>
+            <table class="table table-bordered mb-0">
+                <thead>
+                    <tr>
+                        <th>Login</th>
+                        <th>Nom</th>
+                        <th>Email</th>
+                        <th>Telephone</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for agent in agents %}
+                    <tr>
+                        <td>{{ agent.login|e }}</td>
+                        <td>{{ agent.full_name|default('-')|e }}</td>
+                        <td>{{ agent.email|default('-')|e }}</td>
+                        <td>{{ agent.phone|default('-')|e }}</td>
+                        <td>{{ agent.status|default('-')|e }}</td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center">Aucun agent disponible.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Supprimer un compte agent</h5>
+            <div class="alert alert-warning">
+                Cette suppression retire uniquement le compte agent. Les commercants et donnees fiscales associees sont conserves.
+            </div>
+            <form method="POST" class="row g-3">
+                {{ __csrf() }}
+                <div class="col-md-6">
+                    <label for="agent_login" class="form-label">Login agent</label>
+                    <select id="agent_login" name="__agent_login__" class="form-control" required>
+                        <option value="">Selectionner un agent</option>
+                        {% for agent in agents %}
+                        <option value="{{ agent.login|e }}">{{ agent.login|e }} - {{ agent.full_name|default('-')|e }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label for="confirm_word" class="form-label">Tape SUPPRIMER pour confirmer</label>
+                    <input type="text" id="confirm_word" name="__confirm_word__" class="form-control" required>
+                </div>
+                <div class="col-md-12">
+                    <button type="submit" class="btn btn-danger">
+                        Supprimer le compte agent
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

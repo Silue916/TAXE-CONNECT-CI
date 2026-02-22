@@ -1,0 +1,126 @@
+{% extends layouts %}
+{% from breadcrumb import breadcrumb_field %}
+{% block content %}
+
+<div class="container-fluid">
+    {{ breadcrumb_field({'Transactions fiscales': 'dashboard@transactions'}) }}
+
+    <div class="row">
+        <div class="col-lg-8">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Filtrer les transactions</h5>
+                    {% if scope.is_scoped %}
+                        <p class="mb-2"><strong>Commune:</strong> {{ scope.commune|e }}</p>
+                    {% endif %}
+                    <form method="GET" class="row g-2">
+                        <div class="col-md-4">
+                            <input class="form-control" type="text" name="search" value="{{ search|e }}" placeholder="Recu, avis, commercant">
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-control" name="status">
+                                <option value="">Tous statuts</option>
+                                <option value="success" {{ status == 'success' ? 'selected' : '' }}>success</option>
+                                <option value="pending" {{ status == 'pending' ? 'selected' : '' }}>pending</option>
+                                <option value="failed" {{ status == 'failed' ? 'selected' : '' }}>failed</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <select class="form-control" name="channel">
+                                <option value="">Tous canaux</option>
+                                <option value="orange_money" {{ channel == 'orange_money' ? 'selected' : '' }}>orange_money</option>
+                                <option value="mtn_momo" {{ channel == 'mtn_momo' ? 'selected' : '' }}>mtn_momo</option>
+                                <option value="moov_money" {{ channel == 'moov_money' ? 'selected' : '' }}>moov_money</option>
+                                <option value="mobile_money" {{ channel == 'mobile_money' ? 'selected' : '' }}>mobile_money</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2 d-grid">
+                            <button class="btn btn-secondary" type="submit">Filtrer</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Transactions ({{ total|e }})</h5>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Recu</th>
+                                <th>Avis</th>
+                                <th>Commercant</th>
+                                <th>Montant</th>
+                                <th>Canal</th>
+                                <th>Statut</th>
+                                <th>Date</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for payment in payments %}
+                            <tr>
+                                <td>
+                                    <a href="{{ __path('dashboard@transactions') }}?receipt={{ payment.receipt_ref|e }}&status={{ status|e }}&channel={{ channel|e }}&search={{ search|e }}&_p={{ current|e }}">
+                                        {{ payment.receipt_ref|e }}
+                                    </a>
+                                </td>
+                                <td>{{ payment.notice_ref|e }}</td>
+                                <td>{{ payment.merchant_id|e }}</td>
+                                <td>{{ payment.amount|e }} FCFA</td>
+                                <td>{{ payment.channel|e }}</td>
+                                <td>{{ payment.status|e }}</td>
+                                <td>{{ payment.paid_at is not empty ? payment.paid_at|dates('d/m/Y H:i:s') : '-' }}</td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="7" class="text-center">Aucune transaction pour ce filtre.</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+                        <div>Page {{ current|e }} / {{ nbrePage|e }}</div>
+                        <div class="d-flex gap-2">
+                            {% if current > 1 %}
+                            <a class="btn btn-sm btn-outline-secondary" href="{{ __path('dashboard@transactions') }}?status={{ status|e }}&channel={{ channel|e }}&search={{ search|e }}&_p={{ (current - 1)|e }}">Precedent</a>
+                            {% endif %}
+                            {% if current < nbrePage %}
+                            <a class="btn btn-sm btn-outline-secondary" href="{{ __path('dashboard@transactions') }}?status={{ status|e }}&channel={{ channel|e }}&search={{ search|e }}&_p={{ (current + 1)|e }}">Suivant</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Detail recu</h5>
+                    {% if detail is not empty %}
+                    <p><strong>Recu:</strong> {{ detail.receipt_ref|e }}</p>
+                    <p><strong>Avis:</strong> {{ detail.notice_ref|e }}</p>
+                    <p><strong>Commercant:</strong> {{ detail.merchant_id|e }}</p>
+                    <p><strong>Montant:</strong> {{ detail.amount|e }} FCFA</p>
+                    <p><strong>Canal:</strong> {{ detail.channel|e }}</p>
+                    <p><strong>Statut paiement:</strong> {{ detail.status|e }}</p>
+                    <p><strong>Statut avis:</strong> {{ detail.notice_status|e }}</p>
+                    <p><strong>Echeance:</strong> {{ detail.due_date is not empty ? detail.due_date|dates('d/m/Y') : '-' }}</p>
+                    <p><strong>Periode fiscale:</strong> {{ detail.fiscal_period|e }}</p>
+                    <hr>
+                    {% if detail.qr_token is not empty %}
+                        {{ __QRCodes(_TAXECONNECT_SITE_URL_ ~ '/verify?token=' ~ detail.qr_token) }}
+                    {% else %}
+                        <p>Aucun QR disponible.</p>
+                    {% endif %}
+                    {% else %}
+                    <p>Sélectionne un reçu dans la table pour voir les détails et le QR.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends layouts %} 
+{% from forms import input_field, submit %}
+{% block content %}
+
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4">
+                <div class="tx-login-side">
+                    <h2>Connexion au Portail TaxeConnect CI</h2>
+                    <p>
+                        Accedez a votre espace pour suivre les avis de taxe,
+                        effectuer des paiements et verifier les recus QR.
+                    </p>
+                    <ul>
+                        <li>Canaux officiels uniquement</li>
+                        <li>Traçabilite complete des transactions</li>
+                        <li>Support contribuable disponible</li>
+                    </ul>
+                    <div class="tx-login-help">
+                        <strong>Support:</strong> 0103818803<br>
+                        <strong>Email:</strong> foungnigueyayasilue916@gmail.com
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="login">
+                    <div class="secure" align="center">
+                        <img src="{{ __img('secure.svg') }}" alt="">
+                    </div>
+                    <div class="texthead"><strong>CONNEXION</strong></div>
+                    <div class="reponses {{ class }}">{{ reponse ? reponse : "" }}</div>
+                    <form id="authentification" method="POST">
+
+                        {{ __csrf() }} 
+
+                        {{ input_field(
+                            { 
+                                type : 'text' , 
+                                require : true ,
+                                name : '__login__' ,
+                                placeholder : 'Identifiant...',
+                            }
+                        )}}
+                            
+                        {{ input_field(
+                            {
+                                require : true ,
+                                type : 'password' , 
+                                name : '__password__',
+                                placeholder : 'Mot de passe...',
+                            }
+                        )}} 
+                        
+                        {{ submit(
+                            {
+                                label : 'Connexion',
+                                icon : 'bi bi-lock'
+                            }
+                        )}}
+
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-12 epaphrodite" align="center">
+        <a href="{{ __host() }}"><i class="icofont-long-arrow-left"></i> Retour accueil</a>
+    </div>
+
+{% endblock %}

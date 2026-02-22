@@ -1,0 +1,73 @@
+{% extends layouts %}
+{% from forms import filter_search, checkbox_field, actions_field, select_field %}
+{% from breadcrumb import breadcrumb_field %} 
+{% from pagination import pagination_field %} 
+{% from message import alert_msg %}
+{% block content %}
+{{ alert_msg( reponse , alert ) }}
+{{ breadcrumb_field( 'LISTE DES ACTIONS RECENTES' )}}
+
+    <div class="container">
+        <div class="card_filter_search">
+            
+            {{ filter_search({
+                name: 'search', 
+                placeholder:'Rechercher...'
+            }) }}
+
+            <div class="filtercard" align="right">
+                <div class="dropdown">
+                    <button class="btn btn-secondary dropdown" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                    Filtres <i class="bi bi-chevron-down"></i>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                        <form name="filter" id ="filter" method="GET">
+                            <li>
+                                {{ select_field( 
+                                    {
+                                        name:'filtre',
+                                        init: "Filtre",
+                                        onchange : "filterForm();",
+                                        class : "dropdown",
+                                    }) 
+                                }}
+                            </li>                   
+                        </form>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <form method="POST" name="ifSendDatas">
+            {{ __csrf() }}
+            <table id="TableFromDatas" class="table nowrap displayTable">
+                <thead scope="row">
+                    <tr>
+                        <th>{{ checkbox_field({ id : 'checkall' }) }}</th>
+                        <th>Nº</th>
+                        <th>LOGIN</th>
+                        <th>DATE ACTION</th>
+                        <th>LIBELLE ACTION</th>
+                    </tr>
+                </thead>
+                <tbody scope="row" id="searchtd">
+                    {% for selected in liste_users %} {% set counter = (counter | default (0))+1 %}
+                    <tr data-order-column="1">
+                        <td class='tblcenter' style="width: 1%;">{{ checkbox_field( { name : 'actions[]' , class : 'checkitem' , value : selected._id|e } ) }}</td>
+                        <td class='nodre' style="width: 3%"></td>
+                        <td style="width: 10%">{{ selected.actions|e }}</td>
+                        <td style="width: 10%">{{ selected.dates|e|dates("d/m/Y H:i:s") }}</td>
+                        <td style="width: 40%">{{ selected.label|e }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {{ actions_field( 
+                {
+                    export : "Liste_of_recents_action"  , 
+                    pagination : pagination_field( current , nbrePage , total )
+                }) 
+            }}     
+        </form>
+    </div>
+
+{% endblock %}

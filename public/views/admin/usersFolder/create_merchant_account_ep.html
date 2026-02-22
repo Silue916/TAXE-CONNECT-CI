@@ -1,0 +1,88 @@
+{% extends layouts %}
+{% from breadcrumb import breadcrumb_field %}
+{% from forms import input_field, submit %}
+{% from message import alert_msg %}
+{% block content %}
+{{ alert_msg(reponse, alert) }}
+{{ breadcrumb_field('CREATION COMPTE COMMERÇANT') }}
+
+<div class="container">
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Creer un compte commercant</h5>
+            <form method="POST">
+                {{ __csrf() }}
+                <div class="row g-3">
+                    <div class="col-md-6">
+                        {{ input_field({
+                            name: '__owner_name__',
+                            label: 'Nom proprietaire',
+                            require: true,
+                            maxlength: 160,
+                            feedback: 'Required'
+                        }) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ input_field({
+                            name: '__business_name__',
+                            label: 'Nom commerce',
+                            require: true,
+                            maxlength: 190,
+                            feedback: 'Required'
+                        }) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ input_field({
+                            name: '__login__',
+                            label: 'Login commercant',
+                            require: true,
+                            maxlength: 80,
+                            feedback: 'Required'
+                        }) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ input_field({
+                            type: 'password',
+                            name: '__password__',
+                            label: 'Mot de passe temporaire',
+                            require: true,
+                            feedback: 'Required'
+                        }) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ input_field({
+                            name: '__phone__',
+                            label: 'Telephone'
+                        }) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ input_field({
+                            type: 'email',
+                            name: '__email__',
+                            label: 'Email'
+                        }) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ input_field({
+                            name: '__activity__',
+                            label: 'Activite'
+                        }) }}
+                    </div>
+                    <div class="col-md-6">
+                        {{ input_field({
+                            name: '__address__',
+                            label: 'Adresse'
+                        }) }}
+                    </div>
+                    <div class="col-md-12">
+                        {{ submit({
+                            label: 'Creer compte commercant',
+                            icon: 'bi bi-person-plus-fill'
+                        }) }}
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,100 @@
+{% extends layouts %}
+{% block content %}
+<section class="tx-hero">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <p class="tx-kicker">Plateforme municipale digitale</p>
+                <h1>TaxeConnect CI - File & Pay vos taxes communales</h1>
+                <p class="tx-lead">
+                    Declarez, payez et justifiez vos taxes en ligne via Mobile Money.
+                    Recu numerique, verification QR et suivi en temps reel.
+                </p>
+                <div class="tx-cta">
+                    <a class="tx-btn tx-btn-primary" href="{{ __path('login') }}">Acceder au portail</a>
+                    <a class="tx-btn tx-btn-outline" href="{{ __path('merchant_signup') }}">Inscription commercant</a>
+                    <a class="tx-btn tx-btn-outline" href="{{ _TAXECONNECT_DOCS_URL_ }}" target="_blank">Guide contribuable</a>
+                </div>
+                <div class="tx-badges">
+                    <span>Disponibilite 24/7</span>
+                    <span>Paiement securise</span>
+                    <span>Recu avec QR</span>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="tx-hero-card">
+                    <h4>Acces rapide</h4>
+                    <ul>
+                        <li>Declarer un avis de taxe</li>
+                        <li>Effectuer un paiement mobile</li>
+                        <li>Verifier un recu QR</li>
+                        <li>Suivre vos obligations</li>
+                    </ul>
+                    <div class="tx-qrcode">
+                        {{ __QRCodes(_TAXECONNECT_SITE_URL_) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="tx-section">
+    <div class="container">
+        <h2 class="tx-title">E-Services TaxeConnect</h2>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="tx-service-card">
+                    <h5>File Returns</h5>
+                    <p>Soumettez vos obligations fiscales sans deplacement.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="tx-service-card">
+                    <h5>Pay Taxes</h5>
+                    <p>Payez via Orange Money, MTN MoMo ou Moov Money.</p>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="tx-service-card">
+                    <h5>Tax Clearance</h5>
+                    <p>Accedez aux preuves de conformite et recus verificables.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="tx-section tx-flow">
+    <div class="container">
+        <h2 class="tx-title">Comment ca marche</h2>
+        <div class="row">
+            <div class="col-md-3 mb-3">
+                <div class="tx-step"><span>1</span><p>Inscription et activation</p></div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="tx-step"><span>2</span><p>Emission d'avis de taxe</p></div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="tx-step"><span>3</span><p>Paiement Mobile Money</p></div>
+            </div>
+            <div class="col-md-3 mb-3">
+                <div class="tx-step"><span>4</span><p>Recu et verification QR</p></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="tx-alert">
+    <div class="container">
+        <h3>Alerte fraude</h3>
+        <p>
+            TaxeConnect CI n'autorise aucun paiement sur des comptes prives.
+            Utilisez uniquement les canaux officiels du portail.
+        </p>
+        <p class="mb-0">
+            Assistance: 0103818803 / foungnigueyayasilue916@gmail.com
+        </p>
+    </div>
+</section>
+{% endblock %}

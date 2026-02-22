@@ -1,0 +1,62 @@
+{% extends layouts %}
+{% from breadcrumb import breadcrumb_field %}
+{% block content %}
+{{ breadcrumb_field({'Verification recu': 'dashboard@verification_recu'}) }}
+
+<div class="container-fluid">
+    <div class="card mb-3">
+        <div class="card-body">
+            <h5 class="card-title">Verifier un recu commercant</h5>
+            {% if scope.is_scoped %}
+            <p class="mb-2"><strong>Commune:</strong> {{ scope.commune|e }}</p>
+            {% endif %}
+            <form method="GET" class="row g-2">
+                <div class="col-md-9">
+                    <input
+                        class="form-control"
+                        type="text"
+                        name="receipt"
+                        value="{{ receipt|e }}"
+                        placeholder="Entrez la reference du recu"
+                        required
+                    >
+                </div>
+                <div class="col-md-3 d-grid">
+                    <button class="btn btn-primary" type="submit">Verifier</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">Resultat verification</h5>
+            {% if searched and detail is not empty %}
+                <p>
+                    <strong>Statut:</strong>
+                    {% if detail.status|lower == 'success' %}
+                        <span class="badge bg-success">RECU VALIDE</span>
+                    {% else %}
+                        <span class="badge bg-warning text-dark">RECU TROUVE (A VERIFIER)</span>
+                    {% endif %}
+                </p>
+                <table class="table table-bordered mb-0">
+                    <tbody>
+                        <tr><th>Recu</th><td>{{ detail.receipt_ref|default('-')|e }}</td></tr>
+                        <tr><th>Avis</th><td>{{ detail.notice_ref|default('-')|e }}</td></tr>
+                        <tr><th>Commercant</th><td>{{ detail.merchant_id|default('-')|e }}</td></tr>
+                        <tr><th>Montant</th><td>{{ detail.amount|default(0)|e }} FCFA</td></tr>
+                        <tr><th>Canal</th><td>{{ detail.channel|default('-')|e }}</td></tr>
+                        <tr><th>Statut paiement</th><td>{{ detail.status|default('-')|e }}</td></tr>
+                        <tr><th>Date paiement</th><td>{{ detail.paid_at is not empty ? detail.paid_at|e|dates('d/m/Y H:i') : '-' }}</td></tr>
+                    </tbody>
+                </table>
+            {% elseif searched %}
+                <div class="alert alert-danger mb-0">Aucun recu trouve pour cette commune.</div>
+            {% else %}
+                <p class="mb-0">Saisissez une reference de recu pour lancer la verification.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

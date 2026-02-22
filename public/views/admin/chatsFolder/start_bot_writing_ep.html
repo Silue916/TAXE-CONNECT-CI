@@ -1,0 +1,64 @@
+{% extends layouts %}
+{% from ajax import send_ajax_request, get_ajax_request %}
+{% from forms import input_field, textarea_field, submit %}
+{% from breadcrumb import breadcrumb_field %} 
+{% from tools import copy, recognition %} 
+{% block content %}
+{{ breadcrumb_field('EPAPHRODITES WRITING TEXT' )}}
+
+  <div class="container">
+    <div class="chat-bot-content" id="robot-writing">
+        <p id="warning"><strong>Warning :</strong> the voice recognition command only works with the Google Chrome and Microsoft Edge browsers.</p>
+        <div class="input-group">
+
+          {{ submit(
+            {
+              icon : 'bi bi-mic',
+              color : 'transparent',
+              id : 'startButtonVoice',
+              mainClass : 'input-group-prepend'
+            }
+          )}}
+
+          {{ textarea_field(
+            {
+             require : true ,
+             name : '__send__' ,
+             id : 'usersTextContent' ,
+             rows : 22,
+             placeholder : 'Push and speak...'
+            }
+        )}}
+
+          {{ submit(
+            {
+              icon : 'bi bi-clipboard',
+              color : 'transparent',
+              id : 'copyText',
+              onclick : 'copyContent',
+              mainClass : 'input-group-prepend'
+            }
+          )}}
+
+        </div>
+      </div>
+  </div>
+  
+  {{
+    copy({
+        button : "copyText",
+        content : "usersTextContent",
+        iconFinal:'bi bi-clipboard-check',
+        iconInit:'bi bi-clipboard',
+    })
+  }}
+
+  {{
+    recognition({
+      button : "startButtonVoice",
+      field : "usersTextContent"
+    })
+  }}
+
+{% endblock %}
+

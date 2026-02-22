@@ -1,0 +1,69 @@
+{% extends layouts %}
+{% from ajax import send_ajax_request, get_ajax_request, send_ajax_stream_request %}
+{% from forms import textarea_field, submit %}
+{% from breadcrumb import breadcrumb_field %} 
+{% from tools import recognition, ollamaChatBot %} 
+{% block content %}
+{{ breadcrumb_field('OLLAMA (LLAMA3:8B) FROM EPAPHRODITES' )}}
+
+  <div class="container">
+    <div class="chat-bot-content">
+      <div class="conversation" id="conversation"></div>
+        <div class="input-group">
+          <div id="input-container">
+            {{ submit(
+              {
+                icon : 'bi bi-mic',
+                color : 'transparent',
+                id : 'startButtonVoice',
+                mainClass : 'input-group-prepend'
+              }
+            )}}
+
+            {{ textarea_field(
+              {
+              require : true ,
+              name : '__send__' ,
+              id : '__send__' ,
+              rows : 2,
+              placeholder : 'Message to Epaphrodites Bot...'
+              }
+            )}}
+
+            {{ submit(
+              {
+                icon : 'bi bi-arrow-up-circle-fill',
+                color : 'transparent',
+                id : 'sendMessages',
+                iconId: 'statusIcon',
+                mainClass : 'input-group-prepend'
+              }
+            )}}
+        </div>
+        </div>
+      </div>
+  </div>
+
+  {{ ollamaChatBot(
+    {
+      usersName: 'You',
+      botName: 'Noella',
+      model: 'llama3:8b',
+      temperature: 0.6,
+      max_tokens: 2000,
+      textareaId: '__send__',
+      conversationId: 'conversation',
+      buttonId: 'sendMessages',
+      statusIcon: 'statusIcon',
+      path : 'chats@start_ollama_chatbot'
+    }
+  ) }}  
+
+  {{
+    recognition({
+      button : "startButtonVoice",
+      field : "__send__"
+    })
+  }}
+
+{% endblock %}

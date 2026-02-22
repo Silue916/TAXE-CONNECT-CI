@@ -1,0 +1,57 @@
+{
+  "name": "epaphrodites/epaphrodites",
+  "description": "Epaphrodites framework seamlessly combines simplicity with robust compatibility across PHP, C, and Python, providing strong support for multiple databases while adhering to open-source principles.",
+  "type": "project",
+  "keywords": [
+    "mongodb",
+    "redis",
+    "mysql",
+    "sqLite",
+    "oracle",
+    "sqlserver",
+    "postgresql",
+    "php",
+    "python",
+    "c",
+    "javascript",
+    "twig",
+    "html",
+    "css",
+    "epaphrodites",
+    "Epaphrodites-framework"
+  ],
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "Epaphrodites\\": "bin/",
+      "Database\\Epaphrodites\\": "bin/database/"
+
+    }
+  },
+  "authors": [
+    {
+      "name": "Y'srael Aimé N'DRI",
+      "email": "aimendrikonan@gmail.com",
+      "role": "Lead Developer"
+    }
+  ],
+  "minimum-stability": "stable",
+  "support": {
+    "issues": "https://github.com/epaphrodites/epaphrodites/issues",
+    "source": "https://github.com/epaphrodites/epaphrodite"
+  },
+  "require": {
+    "chillerlan/php-qrcode": "^4.3",
+    "brick/math": "^0.11.0",
+    "symfony/console": "^6.2"
+  },
+  "require-dev": {
+    "php": ">=8.2",
+    "twig/twig": "^3.5",
+    "guzzlehttp/guzzle": "^7.5",
+    "phpunit/phpunit": "^10.4",
+    "phpmailer/phpmailer": "^6.8",
+    "phpoffice/phpspreadsheet": "^1.28",
+    "mpdf/mpdf": "^8.2"
+  }
+}

@@ -1,0 +1,57 @@
+{% extends layouts %}
+{% from breadcrumb import breadcrumb_field %}
+{% block content %}
+    <div class="container-fluid">
+        {{ breadcrumb_field({'Registre contribuables': 'dashboard@contribuables'}) }}
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h4 class="card-title mb-2">Registre des contribuables (MVP - lecture seule)</h4>
+                <p class="mb-0">
+                    TaxeConnect CI - instantane du {{ snapshot_date|e }}
+                </p>
+                <p class="mb-0">
+                    Total en base: {{ total|e }}
+                </p>
+                {% if scope.is_scoped %}
+                    <p class="mb-0">
+                        Filtre commune: {{ scope.commune|e }}
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body pt-3">
+                <table id="TableFromDatas" class="table table-bordered nowrap displayTable">
+                    <thead>
+                        <tr>
+                            <th>ID Commercant</th>
+                            <th>Nom complet</th>
+                            <th>Activite</th>
+                            <th>Commune</th>
+                            <th>Contact</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in contributors %}
+                            <tr>
+                                <td>{{ row.merchant_id|e }}</td>
+                                <td>{{ row.name|e }}</td>
+                                <td>{{ row.business|e }}</td>
+                                <td>{{ row.commune|e }}</td>
+                                <td>{{ row.contact|e }}</td>
+                                <td>{{ row.status|e }}</td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="6" class="text-center">Aucun contribuable enregistre pour le moment.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}

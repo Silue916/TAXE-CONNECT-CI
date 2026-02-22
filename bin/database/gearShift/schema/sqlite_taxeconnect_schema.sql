@@ -1,0 +1,58 @@
+-- TaxeConnect CI - SQLite schema
+
+CREATE TABLE IF NOT EXISTS communes (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  code TEXT NOT NULL UNIQUE,
+  name TEXT NOT NULL UNIQUE,
+  department TEXT DEFAULT NULL,
+  region TEXT DEFAULT NULL,
+  created_at TEXT DEFAULT NULL
+);
+
+CREATE TABLE IF NOT EXISTS users (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  login TEXT NOT NULL UNIQUE,
+  password_hash TEXT NOT NULL,
+  full_name TEXT DEFAULT NULL,
+  email TEXT DEFAULT NULL,
+  phone TEXT DEFAULT NULL,
+  role TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'ACTIVE',
+  commune_id INTEGER DEFAULT NULL,
+  created_by INTEGER DEFAULT NULL,
+  created_at TEXT DEFAULT NULL,
+  updated_at TEXT DEFAULT NULL
+);
+
+CREATE TABLE IF NOT EXISTS mairies (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  commune_id INTEGER NOT NULL UNIQUE,
+  mairie_admin_user_id INTEGER NOT NULL UNIQUE,
+  created_by_super_admin INTEGER NOT NULL,
+  created_at TEXT DEFAULT NULL
+);
+
+CREATE TABLE IF NOT EXISTS agents (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  commune_id INTEGER NOT NULL,
+  agent_user_id INTEGER NOT NULL UNIQUE,
+  created_by_mairie_admin INTEGER NOT NULL,
+  created_at TEXT DEFAULT NULL
+);
+
+CREATE TABLE IF NOT EXISTS merchants (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  merchant_ref TEXT NOT NULL UNIQUE,
+  user_id INTEGER DEFAULT NULL UNIQUE,
+  commune_id INTEGER NOT NULL,
+  created_by_agent_user_id INTEGER NOT NULL,
+  business_name TEXT NOT NULL,
+  owner_name TEXT NOT NULL,
+  phone TEXT DEFAULT NULL,
+  email TEXT DEFAULT NULL,
+  activity TEXT DEFAULT NULL,
+  address TEXT DEFAULT NULL,
+  status TEXT NOT NULL DEFAULT 'ACTIVE',
+  created_at TEXT DEFAULT NULL,
+  updated_at TEXT DEFAULT NULL
+);

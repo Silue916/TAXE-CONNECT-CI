@@ -1,0 +1,43 @@
+{# --- main pagination -- #}
+{% macro pagination_field(currentPage, total, totalData, length) %}
+    <div class="pagination">
+        {% if currentPage > 1 %}<a href="?_p={{ currentPage - 1 }}">Previous</a>{% endif %}
+        {% if currentPage > 1 %}<a href="?_p=1">1</a>{% endif %}
+        {% if currentPage > 4 %}<a href="?_p=2">2</a>{% endif %}
+        {% if currentPage > 4 %}<a href="?_p=3">3</a>{% endif %}
+        {% if currentPage > 2 %}<a href="#">...</a>{% endif %}
+        {% if currentPage > 15 %}<a href="?_p=11">11</a>{% endif %}
+        {% if currentPage > 15 %}<a href="?_p=12">12</a>{% endif %}
+        {% if currentPage > 15 %}<a href="?_p=13">13</a>{% endif %}
+        {% if currentPage > 15 %}<a href="#">...</a>{% endif %}
+        {% for page in range(currentPage, currentPage + 4) %}
+            {% if page > 0 and page <= total %}
+                {% if page == currentPage %}
+                    <a href="?_p={{ page }}" class="active">{{ page }}</a>
+                {% else %}
+                    <a href="?_p={{ page }}">{{ page }}</a>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        {% if currentPage < total %}<a href="?_p={{ currentPage + 1 }}">Next</a>{% endif %}
+            <a href="#"> <span class="totalLeng" data-page-length="{{ length|default(100) }}" id="compteur">0</span> selected out of total {{ totalData }}</a>
+    </div>
+{% endmacro %}
+{# --- End of main pagination -- #}
+
+{# --- datable pagination -- #}
+{% macro dataTable_pagination( pagination, length ) %}
+    <div class="custom-pagination">
+        <span class="pagination-button" id="prev-button">&laquo;</span>
+        <span id="pagination-numbers" class="pagination-numbers"></span>
+        <span class="pagination-button" id="next-button">&raquo;</span>
+    </div>  
+    <div class="dataTables_info" id="example_info" role="status" aria-live="polite">
+        {% if pagination != false %} 
+            <span id="paginationStart"></span> to <span id="paginationEnd"></span> line(s) out of <strong><span id="paginationTotal"></span></strong> <span id="tableFooter">(result : <span id="filteredCount"></span>)</span>
+        {% else %}
+            <span id="compteur">0</span> selected out of <strong> total : <span id="paginationTotal" class="totalLeng" data-page-length="{{ length|default(100) }}"></span></strong> <span id="tableFooter">(result : <span id="filteredCount"></span>)</span>
+        {% endif %}    
+    </div> 
+{# --- End of datable pagination -- #}            
+{% endmacro %}    

@@ -1,0 +1,33 @@
+{# --- Breadcrumb Field --- #}
+{% macro breadcrumb_field(options) %}
+	<nav aria-label="breadcrumb" class="custom-breadcrumb">
+		<ol class="breadcrumb">
+			<li class="breadcrumb-item first-item">
+				<a href="{{ __host() }}">TABLEAU DE BORD</a>
+			</li>
+		
+			{% if options is iterable %}
+				{% set keys = options|keys %}
+				{% set lastIndex = keys|length - 1 %}
+				
+				{% for i, key in keys %}
+				{% set value = options[key] %}
+				
+				{% if i < lastIndex %}
+
+					<li class="breadcrumb-item {% if i == 0 %}second-item{% endif %}">
+					<a href="{{ __path(value) }}">{{ key }}</a>
+					</li>
+				{% else %}
+
+					<li class="breadcrumb-item active" aria-current="page">{{ key }}</li>
+				{% endif %}
+				{% endfor %}
+			{% else %}
+
+				<li class="breadcrumb-item active" aria-current="page">{{ options }}</li>
+			{% endif %}
+		</ol>
+	</nav>
+{% endmacro %}
+{# --- End of Breadcrumb Field --- #}

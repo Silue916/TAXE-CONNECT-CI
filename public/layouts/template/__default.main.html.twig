@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+ <html lang="fr" dir="ltr">
+   <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">        
+        <link rel="stylesheet" href="{{ __css('bootstrap/4.0/bootstrap.min') }}">
+        <link href="{{ __cssfont('font-awesome-min') }}" rel="stylesheet" type="text/css">
+        <link href="{{ __cssbsico('bootstrap-icons') }}" rel="stylesheet" type="text/css">
+        <link href="{{ __cssiconfont('icofont.min') }}" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" type="text/css" href="{{ __css('default/default.main.style') }}">
+        <script src="{{ __js('jquery/jquery.min') }}"></script>
+        <script src="{{ __js('jquery/axios.min') }}"></script>
+        <script src="{{ __js('chart/default.chart.min') }}"></script>
+        <link rel="icon" href="{{ __img('logo_o.png') }}">
+        <title>{{ __msg('site-title') }}</title>
+  </head>
+  <body>
+
+      {{ include('layouts/display/__header.html.html') }}
+
+      <!-- ======= Main content ======= --> 
+        {% block content %}{% endblock %}
+      <!-- ======= End Main content ======= --> 
+      
+      {{ include('layouts/display/__footer.html.html') }}
+
+      <!-- Js Link codes --> 
+      <script src="{{ __js('jquery/jquery.default.main') }}"></script>
+      <script src="{{ __js('jquery/jquery') }}">
+      </script><script src="{{ __js('bootstrap/4.0/bootstrap.bundle.min') }}"></script>
+      <script src="{{ __js('bootstrap/4.0/bootstrap.min') }}"></script>
+      <!-- Js Link codes --> 
+  </body>
+</html>

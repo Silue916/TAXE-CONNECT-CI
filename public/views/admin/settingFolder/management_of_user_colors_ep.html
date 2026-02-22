@@ -1,0 +1,81 @@
+{% extends layouts %}
+{% from breadcrumb import breadcrumb_field %} 
+{% from forms import checkbox_field, actions_field, select_field %}
+{% from message import alert_msg %}
+{% block content %}
+{{ alert_msg( reponse , alert ) }}
+{{ breadcrumb_field('Affectation des couleurs du tableau de bord' )}}
+    <div class="container">
+        {% if is_self_mode %}
+        <form method="POST" class="laodForm">
+            {{ __csrf() }}
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Parametres systeme personnels</h5>
+                    <p class="mb-3">
+                        Ce reglage s'applique uniquement a votre compte.
+                    </p>
+                    <div class="row g-3 align-items-end">
+                        <div class="col-md-8">
+                            {{ select_field({
+                                label: "Theme du tableau de bord",
+                                init :"Choisir une couleur",
+                                name : "__my_color__[]",
+                                value : '_id',
+                                selected : 'label',
+                                datas : data.colorsList(),
+                                position : current_color|e,
+                                require : true
+                            }) }}
+                        </div>
+                        <div class="col-md-4">
+                            <button type="submit" class="btn btn-primary w-100">
+                                Enregistrer mes parametres
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        {% else %}
+        <form method="POST" name="ifSendDatas">
+            <table id="TableFromDatas" class="table table-bordered nowrap displayTable">
+                {{ __csrf() }}
+                <thead scope="row">
+                    <tr>
+                        <th>{{ checkbox_field({ id : 'checkall' }) }}</th>
+                        <th class="head">Nº</th>
+                        <th class="head">GROUPE UTILISATEURS</th>
+                        <th class="head">COULEURS DU TABLEAU DE BORD</th>
+                    </tr>
+                </thead>
+                <tbody scope="row">
+                    {% for select in selectColors %} {% set counter = (counter | default (0))+1 %}
+                        <tr>
+                            <td class='tblcenter' style="width: 1%;">{{ checkbox_field( { name : 'group[]' , class : 'checkitem' , value : counter|e } ) }}</td>
+                            <td class='tblcenter' style="width: 3%">{{ counter|e }}</td>
+                            <td class="text-uppercase" style="width: 30%">{{ select.label|e }}</td>
+                            <td style="width: 50%" id="tdTableContent">
+                                {{ select_field({
+                                    init :"Liste des couleurs du tableau de bord",
+                                    name : counter|e ~ "colors[]",
+                                    value : '_id',
+                                    selected : 'label',
+                                    datas : data.colorsList(),
+                                    position : select.color|e,
+                                    require : true })
+                                }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                {{ actions_field( 
+                    {
+                        datas : data.colorsActions() 
+                    }) 
+                }}     
+            </table>
+        </form>
+        {% endif %}
+    </div> 
+{% endblock %}
