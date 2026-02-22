@@ -6,7 +6,13 @@ RUN apt-get update \
         unzip \
         libicu-dev \
         libzip-dev \
-    && docker-php-ext-install pdo pdo_mysql intl \
+        libxml2-dev \
+        libonig-dev \
+        libpng-dev \
+        libjpeg62-turbo-dev \
+        libfreetype6-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_mysql intl mbstring zip xml gd \
     && a2enmod rewrite headers \
     && rm -rf /var/lib/apt/lists/*
 
@@ -16,7 +22,7 @@ WORKDIR /var/www/html
 
 COPY . /var/www/html
 
-RUN if [ ! -d vendor ]; then composer install --no-interaction --prefer-dist; fi \
+RUN if [ ! -d vendor ]; then composer install --no-interaction --prefer-dist --optimize-autoloader; fi \
     && chown -R www-data:www-data /var/www/html
 
 COPY docker/render-start.sh /usr/local/bin/render-start
