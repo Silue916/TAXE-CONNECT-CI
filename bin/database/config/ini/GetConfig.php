@@ -112,12 +112,36 @@ class GetConfig extends errors
         $key = sprintf('%dDB_%s', $db, $env);
         $value = getenv($key);
 
-        if ($value === false) {
-
-            throw new \InvalidArgumentException(sprintf('Environment variable "%s" not found', $key));
+        if ($value !== false) {
+            return (string) $value;
         }
 
-        return (string)$value;
+        // Render-friendly generic env variables fallback
+        $generic = match ($env) {
+            'DATABASE' => ['DB_NAME', 'DB_DATABASE'],
+            'HOST' => ['DB_HOST'],
+            'PORT' => ['DB_PORT'],
+            'USER' => ['DB_USER', 'DB_USERNAME'],
+            'PASSWORD' => ['DB_PASS', 'DB_PASSWORD'],
+            'DRIVER' => ['DB_DRIVER'],
+            'SOCKET_PATH' => ['DB_SOCKET_PATH'],
+            default => [],
+        };
+
+        foreach ($generic as $genericKey) {
+            $genericValue = getenv($genericKey);
+            if ($genericValue !== false) {
+                return (string) $genericValue;
+            }
+        }
+
+        // Final fallback: Config.ini value
+        $iniValue = static::get($db, $env);
+        if ($iniValue !== '') {
+            return (string) $iniValue;
+        }
+
+        throw new \InvalidArgumentException(sprintf('Environment/config value not found for "%s" (db: %d)', $env, $db));
     }
 
     /**
