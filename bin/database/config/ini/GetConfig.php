@@ -118,13 +118,13 @@ class GetConfig extends errors
 
         // Render-friendly generic env variables fallback
         $generic = match ($env) {
-            'DATABASE' => ['DB_NAME', 'DB_DATABASE'],
-            'HOST' => ['DB_HOST'],
-            'PORT' => ['DB_PORT'],
-            'USER' => ['DB_USER', 'DB_USERNAME'],
-            'PASSWORD' => ['DB_PASS', 'DB_PASSWORD'],
+            'DATABASE' => ['DB_NAME', 'DB_DATABASE', 'MYSQLDATABASE'],
+            'HOST' => ['DB_HOST', 'MYSQLHOST'],
+            'PORT' => ['DB_PORT', 'MYSQLPORT'],
+            'USER' => ['DB_USER', 'DB_USERNAME', 'MYSQLUSER'],
+            'PASSWORD' => ['DB_PASS', 'DB_PASSWORD', 'MYSQLPASSWORD'],
             'DRIVER' => ['DB_DRIVER'],
-            'SOCKET_PATH' => ['DB_SOCKET_PATH'],
+            'SOCKET_PATH' => ['DB_SOCKET_PATH', 'MYSQL_SOCKET_PATH'],
             default => [],
         };
 
