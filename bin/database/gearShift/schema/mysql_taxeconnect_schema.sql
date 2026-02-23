@@ -1,11 +1,7 @@
 -- TaxeConnect CI - MySQL schema (vision v1)
 -- Super admin -> mairie admin -> agents -> merchants by commune
 
-CREATE DATABASE IF NOT EXISTS taxeconnect
-  CHARACTER SET utf8mb4
-  COLLATE utf8mb4_unicode_ci;
 
-USE taxeconnect;
 
 CREATE TABLE IF NOT EXISTS communes (
   id BIGINT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
