@@ -1,6 +1,6 @@
 -- TaxeConnect CI - MySQL seed data (dev bootstrap)
 -- Execute after mysql_taxeconnect_schema.sql
-
+USE if0_41230418_taxeconnect;
 -- Replace password hashes with your own bcrypt hashes in production.
 -- Example hash below corresponds to a placeholder password.
 

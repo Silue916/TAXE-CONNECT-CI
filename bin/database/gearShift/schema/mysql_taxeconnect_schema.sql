@@ -1,5 +1,7 @@
 -- TaxeConnect CI - MySQL schema (vision v1)
 -- Super admin -> mairie admin -> agents -> merchants by commune
+CREATE DATABASE IF NOT EXISTS if0_41230418_taxeconnect;
+USE if0_41230418_taxeconnect;
 
 
 
